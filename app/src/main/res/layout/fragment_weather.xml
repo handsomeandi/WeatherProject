@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.WeatherFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/currentTempTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Temp"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/sunsetTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Sunset"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/sunriseTv"
+        app:layout_constraintStart_toStartOf="@+id/sunriseTv"
+        app:layout_constraintTop_toBottomOf="@+id/sunriseTv" />
+
+    <TextView
+        android:id="@+id/weatherCondTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Weather conditions"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/currentTempTv"
+        app:layout_constraintStart_toStartOf="@+id/currentTempTv"
+        app:layout_constraintTop_toBottomOf="@+id/currentTempTv" />
+
+    <TextView
+        android:id="@+id/windSpeedTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Wind Speed"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/weatherCondTv"
+        app:layout_constraintStart_toStartOf="@+id/weatherCondTv"
+        app:layout_constraintTop_toBottomOf="@+id/weatherCondTv" />
+
+    <TextView
+        android:id="@+id/wetnessTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Wetness"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/windSpeedTv"
+        app:layout_constraintStart_toStartOf="@+id/windSpeedTv"
+        app:layout_constraintTop_toBottomOf="@+id/windSpeedTv" />
+
+    <TextView
+        android:id="@+id/sunriseTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Sunrise"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/wetnessTv"
+        app:layout_constraintStart_toStartOf="@+id/wetnessTv"
+        app:layout_constraintTop_toBottomOf="@+id/wetnessTv" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
