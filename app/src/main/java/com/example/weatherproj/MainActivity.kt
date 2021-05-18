@@ -1,6 +1,9 @@
 package com.example.weatherproj
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -59,6 +62,21 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
+    }
+
+
+
+    override fun onStop() {
+        super.onStop()
+
+        val sharedPreferences: SharedPreferences =
+            this.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(Urls.MY_WEATHER)
+        editor.commit()
+        var testString : String? = sharedPreferences.getString(Urls.MY_WEATHER, "");
+        Log.d("trackshared", "shared destroyed, test string: " + testString)
 
     }
 
