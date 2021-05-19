@@ -1,8 +1,11 @@
 package com.example.weatherproj.fragments
 
 
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -10,31 +13,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherproj.R
 import com.example.weatherproj.Urls
-import com.example.weatherproj.Urls.Companion.MY_PREFS
-import com.example.weatherproj.Urls.Companion.MY_WEATHER
-import com.example.weatherproj.WeatherPresenter
-import com.example.weatherproj.WeatherView
-import com.example.weatherproj.networkobjects.DaggerNetworkComponent
-import com.example.weatherproj.networkobjects.NetworkComponent
-import com.example.weatherproj.networkobjects.NetworkModule
-import com.example.weatherproj.networkobjects.ServerApi
+import com.example.weatherproj.weatherobjects.WeatherPresenter
+import com.example.weatherproj.weatherobjects.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.gson.Gson
-import moxy.InjectViewState
 import moxy.MvpAppCompatFragment
-import moxy.MvpView
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import moxy.presenter.ProvidePresenterTag
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import javax.inject.Inject
-import javax.inject.Provider
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -47,7 +40,8 @@ private const val ARG_PARAM2 = "param2"
  * Use the [WeatherFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),WeatherView {
+class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
+    WeatherView {
 
 
     // TODO: Rename and change types of parameters
@@ -60,8 +54,12 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),WeatherV
     private lateinit var swipeWeather : SwipeRefreshLayout
     val ERROR = "ERROR"
     var gson : Gson = Gson()
+    lateinit var sharedPreferences : SharedPreferences
+
+
     @InjectPresenter
     lateinit var weatherPresenter: WeatherPresenter
+
 
     @ProvidePresenter
     fun provideWeatherPresenter() : WeatherPresenter {
@@ -80,11 +78,12 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),WeatherV
         wetness = view.findViewById(R.id.wetnessTv)
         current_temp = view.findViewById(R.id.currentTempTv)
         swipeWeather = view.findViewById(R.id.swipeWeather)
+        sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
 
         if(swipeWeather != null)    {
             swipeWeather.setOnRefreshListener{
                 Handler().postDelayed(Runnable {
-                    weatherPresenter.loadDataFromApi()
+                    weatherPresenter.loadDataFromApi(sharedPreferences)
                     swipeWeather.isRefreshing = false
                 }, 1000)
             }
@@ -92,32 +91,24 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),WeatherV
 
     }
 
-    override fun removeWeather() {
-        val sharedPreferences: SharedPreferences =
-            activity!!.getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.remove(MY_WEATHER)
-        editor.commit()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var sharedPreferences : SharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
-        weatherPresenter.loadFromSharedOrApi(sharedPreferences)
+        sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
+        var weatherFromShared : String? = sharedPreferences.getString(
+            Urls.MY_WEATHER,"")
+        if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
+            weatherPresenter.loadFromShared(weatherFromShared)
+        }else{
+            weatherPresenter.loadDataFromApi(sharedPreferences)
+        }
+
+
+
 
     }
 
 
-    override fun saveWeather(weather: String) {
-        val sharedPreferences: SharedPreferences =
-            activity!!.getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.remove(MY_WEATHER)
-        editor.putString(MY_WEATHER, weather)
-        editor.commit()
-
-        Log.d("SharedPrefs", sharedPreferences.getString(MY_WEATHER, "")!!)
-    }
 
     override fun showWeather(weather: Weather) {
         sunset.setText(

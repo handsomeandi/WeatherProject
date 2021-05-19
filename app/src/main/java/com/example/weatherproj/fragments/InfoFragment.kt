@@ -6,6 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.weatherproj.R
+import com.example.weatherproj.infoobjects.InfoPresenter
+import com.example.weatherproj.infoobjects.InfoView
+import com.example.weatherproj.weatherobjects.WeatherPresenter
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,10 +23,21 @@ private const val ARG_PARAM2 = "param2"
  * Use the [InfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class InfoFragment : Fragment() {
+class InfoFragment : MvpAppCompatFragment(), InfoView {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+
+    @InjectPresenter
+    lateinit var infoPresenter: InfoPresenter
+
+
+    @ProvidePresenter
+    fun provideInfoPresenter() : InfoPresenter {
+        return InfoPresenter()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

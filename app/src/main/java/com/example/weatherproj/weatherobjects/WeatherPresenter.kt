@@ -1,13 +1,12 @@
-package com.example.weatherproj
+package com.example.weatherproj.weatherobjects
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.example.weatherproj.Urls
 import com.example.weatherproj.networkobjects.DaggerNetworkComponent
 import com.example.weatherproj.networkobjects.NetworkComponent
 import com.example.weatherproj.networkobjects.NetworkModule
 import com.example.weatherproj.networkobjects.ServerApi
-import com.example.weatherproj.weatherobjects.Weather
 import com.google.gson.Gson
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -21,6 +20,9 @@ class WeatherPresenter : MvpPresenter<WeatherView>() {
 
     var gson: Gson = Gson()
 
+    public var TOWN = "Simferopol"
+    public var WEATHER : String = "weather?q=" + TOWN + "&appid=53c6e39cf3ee11a1d7549ffea83d6bd8&units=metric&lang=ru"
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
@@ -29,21 +31,20 @@ class WeatherPresenter : MvpPresenter<WeatherView>() {
 
 
 
-    fun loadDataFromApi() : Weather? {
+    fun loadDataFromApi(sharedPreferences: SharedPreferences) : Weather? {
         var component: NetworkComponent =
-
             DaggerNetworkComponent.builder().networkModule(NetworkModule()).build()
         var serverApi: ServerApi = component.getServerApi()
         var data: Weather? = null
 
-        serverApi.getWeatherData()!!.enqueue(object : Callback<Weather?> {
+        serverApi.getWeatherData(WEATHER)!!.enqueue(object : Callback<Weather?> {
             override fun onResponse(call: Call<Weather?>?, response: Response<Weather?>) {
                 if (response.isSuccessful()) {
                     data = response.body()
-                    var savedWeatherData : String = gson.toJson(data)
-                    viewState.saveWeather(savedWeatherData)
                     if(data != null){
                         viewState.showWeather(data!!)
+                        var savedWeatherData : String = gson.toJson(data)
+                        saveWeather(savedWeatherData, sharedPreferences)
                     }
                     Log.d("trackshared", "loaded from api")
                 } else {
@@ -58,21 +59,26 @@ class WeatherPresenter : MvpPresenter<WeatherView>() {
         return data
         }
 
-    fun loadFromSharedOrApi(sharedPreferences: SharedPreferences) {
-        var weatherFromShared : String? = sharedPreferences.getString(
-            Urls.MY_WEATHER,"")
-        if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
-            var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
-            viewState.showWeather(weatherParsed)
-            Log.d("trackshared", "loaded from shared")
+    fun loadFromShared(weatherFromShared: String) {
+        var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
+        viewState.showWeather(weatherParsed)
+        Log.d("trackshared", "loaded from shared")
 
-        }else{
-            loadDataFromApi()
-        }
     }
 
+    fun saveWeather(weather : String, sharedPreferences: SharedPreferences){
+        val editor = sharedPreferences.edit()
+        editor.remove(Urls.MY_WEATHER)
+        editor.putString(Urls.MY_WEATHER, weather)
+        editor.commit()
 
-
+        Log.d("SharedPrefs", sharedPreferences.getString(Urls.MY_WEATHER, "")!!)
+    }
+    fun removeWeather(sharedPreferences: SharedPreferences){
+        val editor = sharedPreferences.edit()
+        editor.remove(Urls.MY_WEATHER)
+        editor.commit()
+    }
 
 
 }
