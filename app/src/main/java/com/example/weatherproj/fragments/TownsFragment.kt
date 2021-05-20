@@ -6,9 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import com.example.weatherproj.R
 import com.example.weatherproj.townsobjects.TownsPresenter
 import com.example.weatherproj.townsobjects.TownsView
@@ -27,10 +25,14 @@ private const val ARG_PARAM2 = "param2"
  * Use the [TownsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TownsFragment : MvpAppCompatFragment(), TownsView {
+class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var  changeCityBtn : Button
+    private lateinit var  townEditText: EditText
+    private lateinit var townName : String
+
 
     private lateinit var townsSpinner : Spinner
 
@@ -46,6 +48,9 @@ class TownsFragment : MvpAppCompatFragment(), TownsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         townsSpinner = view.findViewById(R.id.townsSpinner)
+        changeCityBtn = view.findViewById(R.id.addTownBtn)
+        townEditText = view.findViewById(R.id.townEditText)
+
 
         val list = mutableListOf(
             "Jungle green",
@@ -64,6 +69,8 @@ class TownsFragment : MvpAppCompatFragment(), TownsView {
         ){}
         // finally, data bind spinner with adapter
         townsSpinner.adapter = adapter
+
+        changeCityBtn.setOnClickListener(this)
 
     }
 
@@ -105,5 +112,16 @@ class TownsFragment : MvpAppCompatFragment(), TownsView {
 
     override fun addToList(town: String) {
         TODO("Not yet implemented")
+    }
+
+    override fun onClick(v: View?) {
+        if(v != null){
+            when(v.id){
+                R.id.addTownBtn -> if(!townEditText.text.isEmpty()){
+                    townName = townEditText.text.toString()
+                    townsPresenter.changeTown(townName)
+                }
+            }
+        }
     }
 }

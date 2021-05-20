@@ -3,6 +3,8 @@ package com.example.weatherproj.weatherobjects
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.weatherproj.Urls
+import com.example.weatherproj.WeatherInteractor
+import com.example.weatherproj.WeatherRepository
 import com.example.weatherproj.networkobjects.DaggerNetworkComponent
 import com.example.weatherproj.networkobjects.NetworkComponent
 import com.example.weatherproj.networkobjects.NetworkModule
@@ -13,6 +15,7 @@ import moxy.MvpPresenter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 
 @InjectViewState
@@ -20,15 +23,11 @@ class WeatherPresenter : MvpPresenter<WeatherView>() {
 
     var gson: Gson = Gson()
 
-    public var TOWN = "Simferopol"
-    public var WEATHER : String = "weather?q=" + TOWN + "&appid=53c6e39cf3ee11a1d7549ffea83d6bd8&units=metric&lang=ru"
+    var weatherInteractor : WeatherInteractor = WeatherInteractor(WeatherRepository())
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-
     }
-
-
 
 
     fun loadDataFromApi(sharedPreferences: SharedPreferences) : Weather? {
@@ -36,8 +35,10 @@ class WeatherPresenter : MvpPresenter<WeatherView>() {
             DaggerNetworkComponent.builder().networkModule(NetworkModule()).build()
         var serverApi: ServerApi = component.getServerApi()
         var data: Weather? = null
+        var url : String? = weatherInteractor.getUrl()
 
-        serverApi.getWeatherData(WEATHER)!!.enqueue(object : Callback<Weather?> {
+        if(url != null){
+        serverApi.getWeatherData(url)!!.enqueue(object : Callback<Weather?> {
             override fun onResponse(call: Call<Weather?>?, response: Response<Weather?>) {
                 if (response.isSuccessful()) {
                     data = response.body()
@@ -46,7 +47,7 @@ class WeatherPresenter : MvpPresenter<WeatherView>() {
                         var savedWeatherData : String = gson.toJson(data)
                         saveWeather(savedWeatherData, sharedPreferences)
                     }
-                    Log.d("trackshared", "loaded from api")
+                    Log.d("trackshared", "loaded from api, url: " + weatherInteractor.getUrl())
                 } else {
                     Log.d("ERROR", response.message())
                 }
@@ -56,6 +57,7 @@ class WeatherPresenter : MvpPresenter<WeatherView>() {
                 Log.d("ERROR", t.message!!)
             }
         })
+        }
         return data
         }
 

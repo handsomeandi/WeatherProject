@@ -19,12 +19,15 @@ import androidx.fragment.app.FragmentTransaction
 import com.example.weatherproj.fragments.InfoFragment
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
+import com.example.weatherproj.networkobjects.DaggerNetworkComponent
+import com.example.weatherproj.networkobjects.NetworkComponent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
+import retrofit2.http.Url
 import java.util.*
 
 
@@ -67,6 +70,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         myFrag = WeatherFragment.newInstance()
         changeFrag(myFrag)
+
+
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
 
