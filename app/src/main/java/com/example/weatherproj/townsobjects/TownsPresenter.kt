@@ -1,22 +1,35 @@
 package com.example.weatherproj.townsobjects
 
-import com.example.weatherproj.WeatherInteractor
-import com.example.weatherproj.WeatherRepository
+import com.example.weatherproj.*
+import com.example.weatherproj.networkobjects.DaggerMainComponent
+import com.example.weatherproj.networkobjects.MainComponent
+import com.example.weatherproj.networkobjects.NetworkModule
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import javax.inject.Inject
 
 @InjectViewState
-class TownsPresenter : MvpPresenter<TownsView>() {
+class TownsPresenter @Inject constructor(private val weatherInteractor: WeatherInteractor, private val dbInteractor : DBInteractor) : MvpPresenter<TownsView>()  {
 
 
-    var weatherInteractor : WeatherInteractor = WeatherInteractor(WeatherRepository())
-
-    fun addTownToDB(town : String){
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
 
     }
 
     fun changeTown(town : String){
-        weatherInteractor.changeTown(town)
+
+        /*var component: MainComponent =
+            DaggerMainComponent.builder().contextModule(ContextModule()).networkModule(NetworkModule()).build()
+        component.inject(this)
+
+        weatherInteractor.changeTown(town)*/
+    }
+
+    fun addTownToDB(town: TownClass){
+        //MyApp.minstance!!.component!!.inject(this)
+
+        dbInteractor.addTown(town)
     }
 
 

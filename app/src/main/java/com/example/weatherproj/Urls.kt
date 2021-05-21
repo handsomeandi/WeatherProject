@@ -6,5 +6,6 @@ class Urls {
 
         public const val MY_PREFS = "myprefs"
         public const val MY_WEATHER = "myweather"
+        public const val DB_NAME = "mydb"
     }
 }

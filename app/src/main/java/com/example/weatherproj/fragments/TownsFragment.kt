@@ -1,19 +1,23 @@
 package com.example.weatherproj.fragments
 
-import android.graphics.Typeface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
+import com.example.weatherproj.MainPresenter
+import com.example.weatherproj.MyApp
 import com.example.weatherproj.R
+import com.example.weatherproj.TownClass
 import com.example.weatherproj.townsobjects.TownsPresenter
 import com.example.weatherproj.townsobjects.TownsView
-import com.example.weatherproj.weatherobjects.WeatherPresenter
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
+import javax.inject.Inject
+import javax.inject.Provider
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,11 +43,20 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
     @InjectPresenter
     lateinit var townsPresenter: TownsPresenter
 
+    @Inject
+    lateinit var presenterProvider: Provider<TownsPresenter>
 
     @ProvidePresenter
+    fun providePresenter(): TownsPresenter {
+        return presenterProvider.get()
+    }
+
+
+
+    /*@ProvidePresenter
     fun provideTownsPresenter() : TownsPresenter {
         return TownsPresenter()
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,7 +89,7 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        MyApp.minstance!!.component!!.inject(this)
 
 
 
@@ -119,7 +132,9 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
             when(v.id){
                 R.id.addTownBtn -> if(!townEditText.text.isEmpty()){
                     townName = townEditText.text.toString()
+                    var townObj : TownClass = TownClass(1,townName)
                     townsPresenter.changeTown(townName)
+                    townsPresenter.addTownToDB(townObj)
                 }
             }
         }

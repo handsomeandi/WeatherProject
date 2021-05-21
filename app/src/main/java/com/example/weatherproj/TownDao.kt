@@ -11,11 +11,11 @@ interface TownDao {
     @Query("SELECT * FROM town")
     fun getAll(): List<TownClass>
 
-    @Query("SELECT * FROM town WHERE id IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<TownClass>
-
-    @Query("SELECT * FROM town WHERE id LIKE :id LIMIT 1")
-    fun findById(id: Int): TownClass
+//    @Query("SELECT * FROM town WHERE id IN (:userIds)")
+//    fun loadAllByIds(userIds: IntArray): List<TownClass>
+//
+//    @Query("SELECT * FROM town WHERE id LIKE :id LIMIT 1")
+//    fun findById(id: Int): TownClass
 
     @Insert
     fun insertAll(vararg users: TownClass)

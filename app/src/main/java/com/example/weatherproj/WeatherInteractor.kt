@@ -1,8 +1,14 @@
 package com.example.weatherproj
 
-class WeatherInteractor(weatherRepository: WeatherRepository) : WeatherMvpInteractor {
+import com.example.weatherproj.weatherobjects.Weather
+import javax.inject.Inject
 
-    private var mWeatherRepository : WeatherRepository = weatherRepository
+
+class WeatherInteractor @Inject constructor(
+    private val mWeatherRepository: WeatherRepository
+) : WeatherMvpInteractor {
+
+
 
     override fun changeTown(town: String) {
         mWeatherRepository.setWeatherTown(town)
@@ -11,4 +17,16 @@ class WeatherInteractor(weatherRepository: WeatherRepository) : WeatherMvpIntera
     override fun getUrl() : String? {
         return mWeatherRepository.getWeatherUrl()
     }
+
+    override fun getTown(): String {
+        return mWeatherRepository.getWeatherTown()
+    }
+
+    fun loadDataFromApi() : Weather?{
+        return mWeatherRepository.loadDataFromApi()
+    }
+
+//    fun insertTown(town: TownClass){
+//        mWeatherRepository.addTown(town)
+//    }
 }

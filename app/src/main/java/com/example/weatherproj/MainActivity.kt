@@ -1,34 +1,19 @@
 package com.example.weatherproj
 
-import android.Manifest
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.weatherproj.fragments.InfoFragment
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
-import com.example.weatherproj.networkobjects.DaggerNetworkComponent
-import com.example.weatherproj.networkobjects.NetworkComponent
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import retrofit2.http.Url
-import java.util.*
 
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -60,7 +45,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         setContentView(R.layout.activity_main)
 
 
-
+        
 
         fragManager = supportFragmentManager
         fragTrans = fragManager.beginTransaction()
