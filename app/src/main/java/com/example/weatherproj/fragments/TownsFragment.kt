@@ -1,11 +1,14 @@
 package com.example.weatherproj.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.example.weatherproj.MainPresenter
 import com.example.weatherproj.MyApp
 import com.example.weatherproj.R
@@ -29,13 +32,14 @@ private const val ARG_PARAM2 = "param2"
  * Use the [TownsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
+class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, AdapterView.OnItemSelectedListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var  changeCityBtn : Button
     private lateinit var  townEditText: EditText
     private lateinit var townName : String
+    private var initialSelectSpinner : Boolean = true
 
 
     private lateinit var townsSpinner : Spinner
@@ -65,14 +69,7 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
         townEditText = view.findViewById(R.id.townEditText)
 
 
-        val list = mutableListOf(
-            "Jungle green",
-            "Light periwinkle",
-            "Lemon glacier",
-            "Kelly green",
-            "Lemon yellow",
-            "Lavender blush"
-        )
+        val list = townsPresenter.getAllTownNames()
 
         // initialize an array adapter for spinner
         val adapter:ArrayAdapter<String> = object: ArrayAdapter<String>(
@@ -83,7 +80,9 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
         // finally, data bind spinner with adapter
         townsSpinner.adapter = adapter
 
+        townsSpinner.onItemSelectedListener = this
         changeCityBtn.setOnClickListener(this)
+//        townsPresenter.deleteAllTowns()
 
     }
 
@@ -133,11 +132,32 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
             when(v.id){
                 R.id.addTownBtn -> if(!townEditText.text.isEmpty()){
                     townName = townEditText.text.toString()
-                    var townObj : TownClass = TownClass(1,townName)
+                    var townObj : TownClass = TownClass(townName)
                     townsPresenter.changeTown(townName)
+                    townsPresenter.addTownToDB(townObj)
+                    var savedTowns : List<TownClass> = townsPresenter.getAllTowns()
+                    for (town in savedTowns){
+                        Log.d("trackDB", "name: " + town.name.toString() + " id:" + town.id)
+                    }
 //                    townsPresenter.addTownToDB(townObj)
                 }
             }
         }
+    }
+
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        if(!initialSelectSpinner){
+            townsPresenter.changeTown(townsSpinner.selectedItem.toString())
+            var intent : Intent  = Intent()
+            var fragmentTransaction : FragmentTransaction = getActivity()!!.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frameLay, WeatherFragment());
+            fragmentTransaction.commit()
+        }
+        initialSelectSpinner = false
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 }

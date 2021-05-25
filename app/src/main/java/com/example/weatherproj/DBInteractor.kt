@@ -8,4 +8,12 @@ class DBInteractor @Inject constructor(
     fun addTown(town : TownClass){
         mWeatherRepository.addTown(town)
     }
+
+    fun getAllTowns() : List<TownClass>{
+        return mWeatherRepository.getAllTowns()
+    }
+
+    fun deleteAllTowns(){
+        mWeatherRepository.deleteAllTowns()
+    }
 }

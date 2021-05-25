@@ -26,6 +26,22 @@ class TownsPresenter @Inject constructor(private val weatherInteractor: WeatherI
         dbInteractor.addTown(town)
     }
 
+    fun getAllTowns() : List<TownClass>{
+        return dbInteractor.getAllTowns()
+    }
+
+    fun deleteAllTowns(){
+        dbInteractor.deleteAllTowns()
+    }
+
+    fun getAllTownNames() : List<String>{
+        var names : ArrayList<String> = ArrayList()
+        for (town in getAllTowns()){
+            names.add(town.name.toString())
+        }
+        return names
+    }
+
 
 
 }

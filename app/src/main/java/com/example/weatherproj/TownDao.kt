@@ -1,9 +1,6 @@
 package com.example.weatherproj
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 
 @Dao
@@ -17,10 +14,13 @@ interface TownDao {
 //    @Query("SELECT * FROM town WHERE id LIKE :id LIMIT 1")
 //    fun findById(id: Int): TownClass
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg users: TownClass)
 
     @Delete
     fun delete(user: TownClass)
+
+    @Query("DELETE FROM town")
+    fun deleteAll()
 
 }

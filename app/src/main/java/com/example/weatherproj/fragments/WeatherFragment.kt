@@ -92,6 +92,8 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
 
 
         if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
+            var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
+//            if(MyApp.minstance!!.getTown() == weatherParsed.get)
             weatherPresenter.loadFromShared(weatherFromShared)
         }else{
             setupObserver()

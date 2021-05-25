@@ -66,4 +66,12 @@ class WeatherRepository @Inject constructor(
         Log.d("db", town.name!!)
     }
 
+    fun getAllTowns() : List<TownClass>{
+        return dbDao.getAll()
+    }
+
+    fun deleteAllTowns(){
+        dbDao.deleteAll()
+    }
+
 }

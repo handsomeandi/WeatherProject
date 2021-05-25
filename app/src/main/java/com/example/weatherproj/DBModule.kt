@@ -18,9 +18,7 @@ class DBModule {
     @Singleton
     @Provides
     fun provideDB(context: Context): MyDB {
-        return Room.databaseBuilder(context, MyDB::class.java, DB_NAME).allowMainThreadQueries()
-            .fallbackToDestructiveMigration()
-            .build()
+        return Room.databaseBuilder(context, MyDB::class.java, DB_NAME).allowMainThreadQueries().fallbackToDestructiveMigration().build()
     }
 
     @Singleton
