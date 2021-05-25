@@ -13,13 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.weatherproj.MyApp
-import com.example.weatherproj.R
-import com.example.weatherproj.Urls
-import com.example.weatherproj.WeatherInteractor
+import androidx.lifecycle.Observer
+import com.example.weatherproj.*
 import com.example.weatherproj.weatherobjects.WeatherPresenter
 import com.example.weatherproj.weatherobjects.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
@@ -58,7 +57,7 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     private lateinit var swipeWeather : SwipeRefreshLayout
     val ERROR = "ERROR"
     var gson : Gson = Gson()
-  //  lateinit var sharedPreferences : SharedPreferences
+    lateinit var sharedPreferences : SharedPreferences
 
 
     @InjectPresenter
@@ -86,16 +85,30 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
         wetness = view.findViewById(R.id.wetnessTv)
         current_temp = view.findViewById(R.id.currentTempTv)
         swipeWeather = view.findViewById(R.id.swipeWeather)
+
+        sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
+        var weatherFromShared : String? = sharedPreferences.getString(
+            Urls.MY_WEATHER,"")
+
+
+        if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
+            weatherPresenter.loadFromShared(weatherFromShared)
+        }else{
+            setupObserver()
+        }
       //  sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
 
         if(swipeWeather != null)    {
             swipeWeather.setOnRefreshListener{
                 Handler().postDelayed(Runnable {
-            //        weatherPresenter.loadDataFromApi(sharedPreferences)
+                    weatherPresenter.removeWeather(sharedPreferences)
+                    setupObserver()
                     swipeWeather.isRefreshing = false
                 }, 1000)
             }
         }
+
+
 
     }
 
@@ -103,20 +116,37 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         MyApp.minstance!!.component!!.inject(this)
-        super.onCreate(savedInstanceState)
-       /* sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
-        var weatherFromShared : String? = sharedPreferences.getString(
-            Urls.MY_WEATHER,"")
-        if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
-            weatherPresenter.loadFromShared(weatherFromShared)
-        }else{
-            weatherPresenter.loadDataFromApi(sharedPreferences)
-        }*/
 
-     //
+        super.onCreate(savedInstanceState)
+
+
+        //
 
 
     }
+
+    private fun setupObserver() {
+        weatherPresenter.loadDataFromApi().observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { weather -> showWeather(weather)
+                            Log.d("track", "loaded from api")
+                            var savedWeatherData : String = gson.toJson(weather!!)
+                            weatherPresenter.saveWeather(savedWeatherData, sharedPreferences)}
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText( activity,it.message!!,Toast.LENGTH_SHORT)
+                    }
+                    Status.LOADING -> {
+                    }
+                }
+            }
+        })
+    }
+
+
+
 
 
 

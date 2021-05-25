@@ -88,8 +88,9 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         MyApp.minstance!!.component!!.inject(this)
+
+        super.onCreate(savedInstanceState)
 
 
 
@@ -134,7 +135,7 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
                     townName = townEditText.text.toString()
                     var townObj : TownClass = TownClass(1,townName)
                     townsPresenter.changeTown(townName)
-                    townsPresenter.addTownToDB(townObj)
+//                    townsPresenter.addTownToDB(townObj)
                 }
             }
         }

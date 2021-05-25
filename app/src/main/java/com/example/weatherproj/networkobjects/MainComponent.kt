@@ -1,9 +1,7 @@
 package com.example.weatherproj.networkobjects
 
 import android.content.Context
-import com.example.weatherproj.ContextModule
-import com.example.weatherproj.DBModule
-import com.example.weatherproj.MyDB
+import com.example.weatherproj.*
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
 import com.example.weatherproj.townsobjects.TownsPresenter
@@ -19,6 +17,7 @@ interface MainComponent {
     fun getServerApi(): ServerApi
     fun getDatabase() : MyDB
     fun getContext() : Context
+//    fun getWeatherApiHelper() : ApiHelper
     fun inject(townsFragment: TownsFragment)
     fun inject(weatherFragment: WeatherFragment)
     //fun inject(townsPresenter: TownsPresenter)

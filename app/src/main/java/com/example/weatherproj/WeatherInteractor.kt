@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 
 class WeatherInteractor @Inject constructor(
-    private val mWeatherRepository: WeatherRepository
+    var mWeatherRepository: WeatherRepository
 ) : WeatherMvpInteractor {
 
 
@@ -25,6 +25,9 @@ class WeatherInteractor @Inject constructor(
     fun loadDataFromApi() : Weather?{
         return mWeatherRepository.loadDataFromApi()
     }
+
+    suspend fun getWeather() =  mWeatherRepository.getWeather()
+
 
 //    fun insertTown(town: TownClass){
 //        mWeatherRepository.addTown(town)

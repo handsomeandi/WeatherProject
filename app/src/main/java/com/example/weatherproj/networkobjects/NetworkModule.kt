@@ -1,6 +1,7 @@
 package com.example.weatherproj.networkobjects
 
 import com.example.weatherproj.Urls
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -18,7 +19,9 @@ class NetworkModule {
         client.writeTimeout(60, TimeUnit.SECONDS)
         client.readTimeout(60, TimeUnit.SECONDS)
         return Retrofit.Builder().baseUrl(Urls.BASE_URL).client(client.build())
-            .addConverterFactory(GsonConverterFactory.create()).build()
+            .addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(
+                CoroutineCallAdapterFactory()
+            ).build()
     }
 
     @Singleton
@@ -32,4 +35,10 @@ class NetworkModule {
     fun provideServerApi(retrofit: Retrofit): ServerApi {
         return retrofit.create(ServerApi::class.java)
     }
+
+//    @Singleton
+//    @Provides
+//    fun provideWeatherApiHelper(serverApi: ServerApi) : ApiHelper{
+//        return ApiHelper(serverApi)
+//    }
 }

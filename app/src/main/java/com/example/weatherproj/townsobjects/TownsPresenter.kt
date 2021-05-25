@@ -1,7 +1,6 @@
 package com.example.weatherproj.townsobjects
 
 import com.example.weatherproj.*
-import com.example.weatherproj.networkobjects.DaggerMainComponent
 import com.example.weatherproj.networkobjects.MainComponent
 import com.example.weatherproj.networkobjects.NetworkModule
 import moxy.InjectViewState
@@ -18,12 +17,7 @@ class TownsPresenter @Inject constructor(private val weatherInteractor: WeatherI
     }
 
     fun changeTown(town : String){
-
-        /*var component: MainComponent =
-            DaggerMainComponent.builder().contextModule(ContextModule()).networkModule(NetworkModule()).build()
-        component.inject(this)
-
-        weatherInteractor.changeTown(town)*/
+        weatherInteractor.changeTown(town)
     }
 
     fun addTownToDB(town: TownClass){

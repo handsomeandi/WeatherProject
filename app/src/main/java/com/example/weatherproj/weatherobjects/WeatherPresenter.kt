@@ -3,16 +3,17 @@ package com.example.weatherproj.weatherobjects
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.weatherproj.*
-import com.example.weatherproj.networkobjects.DaggerMainComponent
 import com.example.weatherproj.networkobjects.MainComponent
 import com.example.weatherproj.networkobjects.NetworkModule
 import com.example.weatherproj.networkobjects.ServerApi
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import androidx.lifecycle.liveData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,25 +21,38 @@ import javax.inject.Inject
 
 
 @InjectViewState
-class WeatherPresenter @Inject constructor(private val weatherInteractor : WeatherInteractor) : MvpPresenter<WeatherView>() {
+class WeatherPresenter @Inject constructor(var weatherInteractor : WeatherInteractor) : MvpPresenter<WeatherView>() {
 
 //    private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
 
     var gson: Gson = Gson()
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
+
+
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
     }
 
 
-    fun loadDataFromApi(sharedPreferences: SharedPreferences){
-      //  MyApp.minstance!!.component!!.inject(this)
-        val data  =  weatherInteractor.loadDataFromApi()
-        viewState.showWeather(data!!)
-        var savedWeatherData : String = gson.toJson(data!!)
-        saveWeather(savedWeatherData, sharedPreferences)
-    }
+    fun loadDataFromApi() =
+        liveData(Dispatchers.IO) {
+            var data: Weather?
+            emit(Resource.loading(data = null))
+            try {
+                emit(Resource.success(data = weatherInteractor.getWeather()))
+            } catch (exception: Exception) {
+                emit(Resource.error(data = null, msg = exception.message ?: "Error Occurred!"))
+            }
+            //  MyApp.minstance!!.component!!.inject(this)
+//        scope.launch {
+//            val data  =  weatherInteractor.loadDataFromApi()
+//            viewState.showWeather(data!!)
+//            var savedWeatherData : String = gson.toJson(data!!)
+//            saveWeather(savedWeatherData, sharedPreferences)
+//        }
+        }
 
 //    suspend fun getApiData() : Weather?{
 //        return weatherInteractor.loadDataFromApi()

@@ -6,10 +6,8 @@ import com.example.weatherproj.networkobjects.MainComponent
 import com.example.weatherproj.networkobjects.NetworkModule
 
 
-class MyApp : Application {
-    constructor() : super()
+class MyApp() : Application() {
 
-    var myDatabase: MyDB? = null
     private var mtown: String = "Simferopol"
     private var myUrl: String =
         "weather?q=town&appid=53c6e39cf3ee11a1d7549ffea83d6bd8&units=metric&lang=ru"
@@ -18,6 +16,7 @@ class MyApp : Application {
 
     companion object {
         var minstance: MyApp? = null
+        var myDatabase: MyDB? = null
             private set
     }
 

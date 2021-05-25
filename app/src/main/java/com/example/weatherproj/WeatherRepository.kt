@@ -13,7 +13,8 @@ import javax.inject.Inject
 
 class WeatherRepository @Inject constructor(
     var serverApi : ServerApi,
-    var dbDao: TownDao
+    var dbDao: TownDao,
+    var apiHelper: ApiHelper
 ){
 
 
@@ -36,24 +37,29 @@ class WeatherRepository @Inject constructor(
         var url : String? = getWeatherUrl()
         var town : String = getWeatherTown()
 
-        if(url != null){
-            serverApi.getWeatherData(url, town)!!.enqueue(object : Callback<Weather?> {
-                override fun onResponse(call: Call<Weather?>?, response: Response<Weather?>) {
-                    if (response.isSuccessful()) {
-                        data = response.body()
-                        Log.d("trackshared", "loaded from api, url: " + getWeatherUrl())
-                    } else {
-                        Log.d("ERROR", response.message())
-                    }
-                }
-                override fun onFailure(call: Call<Weather?>?, t: Throwable) {
-                    Log.d("ERROR", t.message!!)
-                }
-            })
-        }
+//        if(url != null){
+//            serverApi.getWeatherData(url, town)!!.enqueue(object : Callback<Weather?> {
+//                override fun onResponse(call: Call<Weather?>?, response: Response<Weather?>) {
+//                    if (response.isSuccessful()) {
+//                        data = response.body()
+//                        Log.d("trackshared", "loaded from api, url: " + getWeatherUrl())
+//                    } else {
+//                        Log.d("ERROR", response.message())
+//                    }
+//                }
+//                override fun onFailure(call: Call<Weather?>?, t: Throwable) {
+//                    Log.d("ERROR", t.message!!)
+//                }
+//            })
+//        }
         return data
     }
 
+    suspend fun getWeather() = apiHelper.getWeather()
+
+    fun getWeatherApiHelper() : ApiHelper{
+        return apiHelper
+    }
 
     fun addTown(town : TownClass){
         dbDao.insertAll(town)
