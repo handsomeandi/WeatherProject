@@ -2,18 +2,24 @@ package com.example.weatherproj
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.weatherproj.fragments.InfoFragment
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
+import java.util.jar.Manifest
 
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -23,7 +29,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     private lateinit var fragManager: FragmentManager
 
-    var fusedLocationClient: FusedLocationProviderClient? = null
+    lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var locationRequest : LocationRequest
+
+    var PERMISSION_ID = 1000
+
 
     @InjectPresenter
     lateinit var mainPresenter: MainPresenter
@@ -39,6 +49,18 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 //
 //    }
 
+    private fun checkPermissions():Boolean{
+        if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            return true
+        }
+        return false
+    }
+
+    private fun accessPermissions(){
+        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), PERMISSION_ID)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +74,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         lateinit var myFrag : Fragment
         bottomNavigationView = findViewById(com.example.weatherproj.R.id.bottomNav)
 
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+
+        getLastLocation()
 
         myFrag = WeatherFragment.newInstance()
         changeFrag(myFrag)
@@ -81,6 +108,9 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             }
 
         }
+
+
+
 
 //        var grantPermissions : Boolean = checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION,
 //            Manifest.permission.ACCESS_FINE_LOCATION)
@@ -128,6 +158,78 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
 
 
+    }
+
+
+    private fun getLastLocation(){
+        if(checkPermissions()){
+            fusedLocationClient.lastLocation.addOnCompleteListener{task ->
+                var location : Location? = task.result
+                if(location != null){
+                    Log.d("coords", String.format("Longitude: %s, Latitude: %s", location.longitude, location.latitude))
+                    setCurLoc(location.latitude.toString(),location.longitude.toString())
+                }else{
+                    getNewLocation()
+                }
+            }
+        }else{
+            accessPermissions()
+        }
+    }
+
+    private fun getNewLocation(){
+        locationRequest = LocationRequest()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 0
+        locationRequest.fastestInterval = 0
+        locationRequest.numUpdates = 2
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient!!.requestLocationUpdates(locationRequest,
+            locationCallback,Looper.myLooper()
+        )
+    }
+
+    private val locationCallback = object : LocationCallback(){
+        override fun onLocationResult(p0: LocationResult?) {
+            var lastLocation : Location = p0!!.lastLocation
+            Log.d("coords", String.format("Longitude: %s, Latitude: %s", lastLocation.longitude, lastLocation.latitude))
+            setCurLoc(lastLocation.latitude.toString(),lastLocation.longitude.toString())
+
+        }
+    }
+
+    private fun setCurLoc(lat:String,lon:String){
+        MyApp.minstance!!.setLat(lat)
+        MyApp.minstance!!.setLon(lon)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if(requestCode == PERMISSION_ID){
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Log.d("check", "You have a permission")
+                getLastLocation()
+            }
+        }
     }
 
 //    override fun onRequestPermissionsResult(requestCode: Int,

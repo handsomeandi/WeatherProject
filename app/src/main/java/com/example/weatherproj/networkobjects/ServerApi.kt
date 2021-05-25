@@ -11,4 +11,6 @@ import retrofit2.http.Url
 interface ServerApi {
     @GET()
     suspend fun getWeatherData( @Url url:String, @Query("q") town:String): Weather?
+    @GET()
+    suspend fun getCurrentLocationWeather(@Url url:String, @Query("lat") lat:String,@Query("lon") lon:String) : Weather?
 }

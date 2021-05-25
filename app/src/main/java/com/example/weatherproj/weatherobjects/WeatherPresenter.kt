@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 
 @InjectViewState
-class WeatherPresenter @Inject constructor(var weatherInteractor : WeatherInteractor) : MvpPresenter<WeatherView>() {
+class WeatherPresenter @Inject constructor(var weatherInteractor : WeatherInteractor, var dbInteractor: DBInteractor) : MvpPresenter<WeatherView>() {
 
 //    private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
@@ -54,6 +54,24 @@ class WeatherPresenter @Inject constructor(var weatherInteractor : WeatherIntera
 //        }
         }
 
+
+    fun loadCurlocWeatherFromApi() =
+        liveData(Dispatchers.IO) {
+            var data: Weather?
+            emit(Resource.loading(data = null))
+            try {
+                emit(Resource.success(data = weatherInteractor.getCurLocWeather()))
+            } catch (exception: Exception) {
+                emit(Resource.error(data = null, msg = exception.message ?: "Error Occurred!"))
+            }
+            //  MyApp.minstance!!.component!!.inject(this)
+//        scope.launch {
+//            val data  =  weatherInteractor.loadDataFromApi()
+//            viewState.showWeather(data!!)
+//            var savedWeatherData : String = gson.toJson(data!!)
+//            saveWeather(savedWeatherData, sharedPreferences)
+//        }
+        }
 //    suspend fun getApiData() : Weather?{
 //        return weatherInteractor.loadDataFromApi()
 //    }
@@ -65,14 +83,18 @@ class WeatherPresenter @Inject constructor(var weatherInteractor : WeatherIntera
 
     }
 
-    fun saveWeather(weather : String, sharedPreferences: SharedPreferences){
-        val editor = sharedPreferences.edit()
-        editor.remove(Urls.MY_WEATHER)
-        editor.putString(Urls.MY_WEATHER, weather)
-        editor.commit()
-
-        Log.d("SharedPrefs", sharedPreferences.getString(Urls.MY_WEATHER, "")!!)
+    fun addTownToDb(town: TownClass){
+        dbInteractor.addTown(town)
     }
+
+//    fun saveWeather(weather : String, sharedPreferences: SharedPreferences){
+//        val editor = sharedPreferences.edit()
+//        editor.remove(Urls.MY_WEATHER)
+//        editor.putString(Urls.MY_WEATHER, weather)
+//        editor.commit()
+//
+//        Log.d("SharedPrefs", sharedPreferences.getString(Urls.MY_WEATHER, "")!!)
+//    }
     fun removeWeather(sharedPreferences: SharedPreferences){
         val editor = sharedPreferences.edit()
         editor.remove(Urls.MY_WEATHER)

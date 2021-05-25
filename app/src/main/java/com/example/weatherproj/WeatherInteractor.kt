@@ -28,6 +28,8 @@ class WeatherInteractor @Inject constructor(
 
     suspend fun getWeather() =  mWeatherRepository.getWeather()
 
+    suspend fun getCurLocWeather() = mWeatherRepository.getCurLocWeather()
+
 
 //    fun insertTown(town: TownClass){
 //        mWeatherRepository.addTown(town)

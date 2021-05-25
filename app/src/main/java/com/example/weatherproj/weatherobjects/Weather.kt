@@ -21,6 +21,9 @@ class Weather {
     @SerializedName("sys")
     private lateinit var sys: SunObject
 
+    @SerializedName("name")
+    private var name : String? = null
+
     fun getTemp(): String? {
         return main!!.getTemp()
     }
@@ -54,6 +57,11 @@ class Weather {
         calendar.setTimeInMillis(seconds * 1000)
         return formatter.format(calendar.getTime())
     }
+
+    fun getTownName() : String?{
+        return name
+    }
+
 
 
 }

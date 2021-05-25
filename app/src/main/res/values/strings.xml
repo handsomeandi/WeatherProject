@@ -9,4 +9,5 @@
     <string name="weather_cond">Погодные условия: </string>
     <string name="sunrise">Рассвет: </string>
     <string name="current_temp">Текущая температура: </string>
+    <string name="town_name">"Город: "</string>
 </resources>

@@ -9,6 +9,7 @@ class MainObject {
     @SerializedName("humidity")
     private var humidity: String? = null
 
+
     fun getTemp(): String? {
         return temp
     }

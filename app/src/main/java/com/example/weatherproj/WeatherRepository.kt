@@ -57,6 +57,8 @@ class WeatherRepository @Inject constructor(
 
     suspend fun getWeather() = apiHelper.getWeather()
 
+    suspend fun getCurLocWeather() = apiHelper.getCurrLocWeather()
+
     fun getWeatherApiHelper() : ApiHelper{
         return apiHelper
     }

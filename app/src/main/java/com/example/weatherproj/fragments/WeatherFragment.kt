@@ -1,11 +1,8 @@
 package com.example.weatherproj.fragments
 
 
-import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -14,17 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.lifecycle.Observer
 import com.example.weatherproj.*
 import com.example.weatherproj.weatherobjects.WeatherPresenter
 import com.example.weatherproj.weatherobjects.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.gson.Gson
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -53,6 +47,7 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     private lateinit var wind_speed : TextView
     private lateinit var weather_cond : TextView
     private lateinit var sunrise : TextView
+    private lateinit var townName : TextView
     private lateinit var current_temp : TextView
     private lateinit var swipeWeather : SwipeRefreshLayout
     val ERROR = "ERROR"
@@ -80,23 +75,33 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
 
         sunset = view.findViewById(R.id.sunsetTv)
         sunrise = view.findViewById(R.id.sunriseTv)
-        wind_speed = view.findViewById(R.id.windSpeedTv)
-        weather_cond = view.findViewById(R.id.weatherCondTv)
-        wetness = view.findViewById(R.id.wetnessTv)
+        wind_speed = view.findViewById(R.id.githubLabel)
+        weather_cond = view.findViewById(R.id.phoneNumLabel)
+        wetness = view.findViewById(R.id.librariesLabel)
         current_temp = view.findViewById(R.id.currentTempTv)
         swipeWeather = view.findViewById(R.id.swipeWeather)
+        townName = view.findViewById(R.id.townName)
 
         sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
         var weatherFromShared : String? = sharedPreferences.getString(
             Urls.MY_WEATHER,"")
 
-
-        if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
-            var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
-//            if(MyApp.minstance!!.getTown() == weatherParsed.get)
-            weatherPresenter.loadFromShared(weatherFromShared)
+        if(MyApp.minstance!!.loadFromCoords()){
+            setupObserver(weatherPresenter.loadCurlocWeatherFromApi())
+            MyApp.minstance!!.nextLoadFromList()
         }else{
-            setupObserver()
+
+            if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
+                var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
+                var currentTownName : String = MyApp.minstance!!.getTown()
+                if(currentTownName == weatherParsed.getTownName()){
+                    weatherPresenter.loadFromShared(weatherFromShared)
+                }else{
+                    setupObserver(weatherPresenter.loadDataFromApi())
+                }
+            }else{
+                setupObserver(weatherPresenter.loadDataFromApi())
+            }
         }
       //  sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
 
@@ -104,11 +109,12 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
             swipeWeather.setOnRefreshListener{
                 Handler().postDelayed(Runnable {
                     weatherPresenter.removeWeather(sharedPreferences)
-                    setupObserver()
+                    setupObserver(weatherPresenter.loadDataFromApi())
                     swipeWeather.isRefreshing = false
                 }, 1000)
             }
         }
+
 
 
 
@@ -127,15 +133,20 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
 
     }
 
-    private fun setupObserver() {
-        weatherPresenter.loadDataFromApi().observe(this, Observer {
+    //TODO: Сделать добавление текущего города в базу данных
+
+    private fun setupObserver(liveData : LiveData<Resource<Weather>>) {
+//        if()
+//        weatherPresenter.loadDataFromApi()
+        liveData.observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         resource.data?.let { weather -> showWeather(weather)
+                            MyApp.minstance!!.changeTown(weather.getTownName()!!)
                             Log.d("track", "loaded from api")
                             var savedWeatherData : String = gson.toJson(weather!!)
-                            weatherPresenter.saveWeather(savedWeatherData, sharedPreferences)}
+                            saveWeather(savedWeatherData, sharedPreferences)}
                     }
                     Status.ERROR -> {
                         Toast.makeText( activity,it.message!!,Toast.LENGTH_SHORT)
@@ -148,7 +159,14 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     }
 
 
+    private fun saveWeather(weather : String, sharedPreferences: SharedPreferences){
+        val editor = sharedPreferences.edit()
+        editor.remove(Urls.MY_WEATHER)
+        editor.putString(Urls.MY_WEATHER, weather)
+        editor.commit()
 
+        Log.d("SharedPrefs", sharedPreferences.getString(Urls.MY_WEATHER, "")!!)
+    }
 
 
 
@@ -194,6 +212,9 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
                 getString(R.string.current_temp),
                 weather.getTemp()
             )
+        )
+        townName.setText(
+            java.lang.String.format("%s%s",getString(R.string.town_name), weather.getTownName())
         )
     }
 

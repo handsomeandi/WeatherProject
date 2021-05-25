@@ -49,7 +49,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/sunriseTv" />
 
             <TextView
-                android:id="@+id/weatherCondTv"
+                android:id="@+id/phoneNumLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -61,28 +61,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/currentTempTv" />
 
             <TextView
-                android:id="@+id/windSpeedTv"
+                android:id="@+id/githubLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Wind Speed"
                 android:textSize="20dp"
                 android:padding="10dp"
-                app:layout_constraintEnd_toEndOf="@+id/weatherCondTv"
-                app:layout_constraintStart_toStartOf="@+id/weatherCondTv"
-                app:layout_constraintTop_toBottomOf="@+id/weatherCondTv" />
+                app:layout_constraintEnd_toEndOf="@+id/phoneNumLabel"
+                app:layout_constraintStart_toStartOf="@+id/phoneNumLabel"
+                app:layout_constraintTop_toBottomOf="@+id/phoneNumLabel" />
 
             <TextView
-                android:id="@+id/wetnessTv"
+                android:id="@+id/librariesLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Wetness"
                 android:textSize="20dp"
                 android:padding="10dp"
-                app:layout_constraintEnd_toEndOf="@+id/windSpeedTv"
-                app:layout_constraintStart_toStartOf="@+id/windSpeedTv"
-                app:layout_constraintTop_toBottomOf="@+id/windSpeedTv" />
+                app:layout_constraintEnd_toEndOf="@+id/githubLabel"
+                app:layout_constraintStart_toStartOf="@+id/githubLabel"
+                app:layout_constraintTop_toBottomOf="@+id/githubLabel" />
 
             <TextView
                 android:id="@+id/sunriseTv"
@@ -92,9 +92,21 @@
                 android:text="Sunrise"
                 android:textSize="20dp"
                 android:padding="10dp"
-                app:layout_constraintEnd_toEndOf="@+id/wetnessTv"
-                app:layout_constraintStart_toStartOf="@+id/wetnessTv"
-                app:layout_constraintTop_toBottomOf="@+id/wetnessTv" />
+                app:layout_constraintEnd_toEndOf="@+id/librariesLabel"
+                app:layout_constraintStart_toStartOf="@+id/librariesLabel"
+                app:layout_constraintTop_toBottomOf="@+id/librariesLabel" />
+
+            <TextView
+                android:id="@+id/townName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Town"
+                android:textSize="20dp"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/sunsetTv"
+                app:layout_constraintStart_toStartOf="@+id/sunsetTv"
+                app:layout_constraintTop_toBottomOf="@+id/sunsetTv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
