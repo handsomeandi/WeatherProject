@@ -64,12 +64,20 @@ class WeatherRepository @Inject constructor(
     }
 
     fun addTown(town : TownClass){
+        for (checkTown in dbDao.getAll()){
+            if(checkTown.name == town.name){
+                return
+            }
+        }
         dbDao.insertAll(town)
-        Log.d("db", town.name!!)
     }
 
     fun getAllTowns() : List<TownClass>{
         return dbDao.getAll()
+    }
+
+    fun getTownByName(name : String) : TownClass?{
+        return dbDao.getTownByName(name)
     }
 
     fun deleteAllTowns(){

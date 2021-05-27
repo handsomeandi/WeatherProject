@@ -55,6 +55,11 @@ class WeatherPresenter @Inject constructor(var weatherInteractor : WeatherIntera
         }
 
 
+
+    fun deleteAllTowns(){
+        dbInteractor.deleteAllTowns()
+    }
+
     fun loadCurlocWeatherFromApi() =
         liveData(Dispatchers.IO) {
             var data: Weather?
@@ -87,6 +92,14 @@ class WeatherPresenter @Inject constructor(var weatherInteractor : WeatherIntera
         dbInteractor.addTown(town)
     }
 
+
+    fun getAllTowns() : List<TownClass>{
+        return dbInteractor.getAllTowns()
+    }
+
+    fun getTownByName(name : String) : TownClass?{
+        return dbInteractor.getTownByName(name)
+    }
 //    fun saveWeather(weather : String, sharedPreferences: SharedPreferences){
 //        val editor = sharedPreferences.edit()
 //        editor.remove(Urls.MY_WEATHER)

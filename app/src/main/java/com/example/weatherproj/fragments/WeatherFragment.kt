@@ -86,6 +86,8 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
         var weatherFromShared : String? = sharedPreferences.getString(
             Urls.MY_WEATHER,"")
 
+//        weatherPresenter.deleteAllTowns()
+
         if(MyApp.minstance!!.loadFromCoords()){
             setupObserver(weatherPresenter.loadCurlocWeatherFromApi())
             MyApp.minstance!!.nextLoadFromList()
@@ -103,6 +105,7 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
                 setupObserver(weatherPresenter.loadDataFromApi())
             }
         }
+
       //  sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
 
         if(swipeWeather != null)    {
@@ -146,7 +149,15 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
                             MyApp.minstance!!.changeTown(weather.getTownName()!!)
                             Log.d("track", "loaded from api")
                             var savedWeatherData : String = gson.toJson(weather!!)
+                            var town = TownClass(weather.getTownName())
+                            if(weatherPresenter.getTownByName(weather.getTownName()!!) == null){
+                                weatherPresenter.addTownToDb(town)
+                            }
+//                            weatherPresenter.addTownToDb(town)
                             saveWeather(savedWeatherData, sharedPreferences)}
+                            for (townObject in weatherPresenter.getAllTowns()){
+                                Log.d("track", "Town: " + townObject.name)
+                            }
                     }
                     Status.ERROR -> {
                         Toast.makeText( activity,it.message!!,Toast.LENGTH_SHORT)

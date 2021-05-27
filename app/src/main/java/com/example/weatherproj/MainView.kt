@@ -10,5 +10,5 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(value = AddToEndStrategy::class)
 interface MainView : MvpView {
 
-    fun changeFrag(fragment: Fragment)
+    fun changeFrag(id : Int)
 }

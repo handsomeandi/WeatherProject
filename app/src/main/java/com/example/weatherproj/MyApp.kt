@@ -1,7 +1,6 @@
 package com.example.weatherproj
 
 import android.app.Application
-import com.example.weatherproj.fragments.WeatherFragment
 import com.example.weatherproj.networkobjects.DaggerMainComponent
 import com.example.weatherproj.networkobjects.MainComponent
 import com.example.weatherproj.networkobjects.NetworkModule
@@ -15,7 +14,7 @@ class MyApp() : Application() {
     private var curLocUrl: String = "http://api.openweathermap.org/data/2.5/weather?lat=smh&lon=smh&appid=53c6e39cf3ee11a1d7549ffea83d6bd8"
     private var lat : String = "0"
     private var lon : String = "0"
-    private var loadFromCoords = true
+    private var loadFromCoordsBool = true
 
     var component: MainComponent? = null
 
@@ -40,11 +39,11 @@ class MyApp() : Application() {
     }
 
     fun loadFromCoords() : Boolean{
-        return loadFromCoords
+        return this.loadFromCoordsBool
     }
 
     fun nextLoadFromList(){
-        this.loadFromCoords = false
+        this.loadFromCoordsBool = false
     }
 
     fun getDatabase(): MyDB? {

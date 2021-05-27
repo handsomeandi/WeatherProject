@@ -14,6 +14,9 @@ interface TownDao {
 //    @Query("SELECT * FROM town WHERE id LIKE :id LIMIT 1")
 //    fun findById(id: Int): TownClass
 
+    @Query("SELECT * FROM town WHERE name = :name")
+    fun getTownByName(name:String?) : TownClass?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg users: TownClass)
 

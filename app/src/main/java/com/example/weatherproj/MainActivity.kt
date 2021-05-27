@@ -1,7 +1,6 @@
 package com.example.weatherproj
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -11,6 +10,11 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.weatherproj.Urls.Companion.BOTTOM_NAV_INFO_PAGE_ID
+import com.example.weatherproj.Urls.Companion.BOTTOM_NAV_TOWNS_PAGE_ID
+import com.example.weatherproj.Urls.Companion.BOTTOM_NAV_WEATHER_PAGE_ID
+import com.example.weatherproj.Urls.Companion.FRAGMENT_CHANGE
 import com.example.weatherproj.fragments.InfoFragment
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
@@ -19,7 +23,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import java.util.jar.Manifest
 
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -80,34 +83,19 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         getLastLocation()
 
-        myFrag = WeatherFragment.newInstance()
-        changeFrag(myFrag)
+        changeFrag(BOTTOM_NAV_WEATHER_PAGE_ID)
+
+        registerReceiver()
 
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
 
-            when(item.itemId){
-                R.id.weatherPage -> {
-                    myFrag = WeatherFragment.newInstance()
-                    changeFrag(myFrag)
-                    true
-                }
-                R.id.townsPage -> {
-                    myFrag = TownsFragment.newInstance()
-                    changeFrag(myFrag)
-                    true
-                }
-                R.id.infoPage -> {
-                    myFrag = InfoFragment.newInstance()
-                    changeFrag(myFrag)
-                    true
-                }
-                else -> false
-
-            }
+            changeFrag(item.itemId)
+            true
 
         }
+
 
 
 
@@ -160,6 +148,17 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     }
 
+
+
+    private fun registerReceiver(){
+        var act2InitReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                changeFrag(intent.getIntExtra(FRAGMENT_CHANGE,-10))
+            }
+        }
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(act2InitReceiver, IntentFilter("change fragment"))
+    }
 
     private fun getLastLocation(){
         if(checkPermissions()){
@@ -269,7 +268,9 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 //    }
 
 
-
+    private fun setBottomNavigationItem(id: Int){
+        bottomNavigationView.getMenu().findItem(id).setChecked(true);
+    }
 
 
     override fun onStop() {
@@ -281,10 +282,27 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     }
 
-    override fun changeFrag(fragment: Fragment){
+    override fun changeFrag(id : Int){
+        var myFrag : Fragment? = null
+        when(id){
+            R.id.weatherPage -> {
+                myFrag = WeatherFragment.newInstance()
+            }
+            R.id.townsPage -> {
+                myFrag = TownsFragment.newInstance()
+            }
+            R.id.infoPage -> {
+                myFrag = InfoFragment.newInstance()
+            }
+            else -> {
+                myFrag = WeatherFragment.newInstance()
+            }
+
+        }
         fragTrans = fragManager.beginTransaction()
-        fragTrans.replace(R.id.frameLay, fragment)
+        fragTrans.replace(R.id.frameLay, myFrag)
         fragTrans.commit()
+        setBottomNavigationItem(id)
     }
 
 
