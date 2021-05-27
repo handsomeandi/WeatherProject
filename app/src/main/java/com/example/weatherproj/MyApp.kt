@@ -1,17 +1,17 @@
 package com.example.weatherproj
 
 import android.app.Application
+import com.example.weatherproj.databaseobjects.MyDB
+import com.example.weatherproj.modules.ContextModule
+import com.example.weatherproj.modules.DBModule
 import com.example.weatherproj.networkobjects.DaggerMainComponent
-import com.example.weatherproj.networkobjects.MainComponent
-import com.example.weatherproj.networkobjects.NetworkModule
+import com.example.weatherproj.modules.NetworkModule
 
 
 class MyApp() : Application() {
 
     private var mtown: String = "Simferopol"
-    private var myUrl: String =
-        "weather?q=town&appid=53c6e39cf3ee11a1d7549ffea83d6bd8&units=metric&lang=ru"
-    private var curLocUrl: String = "http://api.openweathermap.org/data/2.5/weather?lat=smh&lon=smh&appid=53c6e39cf3ee11a1d7549ffea83d6bd8"
+    private var myUrl: String = ""
     private var lat : String = "0"
     private var lon : String = "0"
     private var loadFromCoordsBool = true
@@ -27,16 +27,10 @@ class MyApp() : Application() {
     override fun onCreate() {
         super.onCreate()
         minstance = this
-        // minstance = this
-        mtown = "Simferopol"
-        myUrl = "weather?q=$mtown&appid=53c6e39cf3ee11a1d7549ffea83d6bd8&units=metric&lang=ru"
-        component = DaggerMainComponent.builder().contextModule(ContextModule(this)).dBModule(DBModule()).networkModule(NetworkModule()).build()
-        /* myDatabase = Room.databaseBuilder(component.getContext(), MyDB::class.java, "WeatherDB").allowMainThreadQueries()
-                 .fallbackToDestructiveMigration()
-                 .build()*/
-
-
-    }
+        component = DaggerMainComponent.builder().contextModule(ContextModule(this)).dBModule(
+            DBModule()
+        ).networkModule(NetworkModule()).build()
+       }
 
     fun loadFromCoords() : Boolean{
         return this.loadFromCoordsBool
@@ -44,10 +38,6 @@ class MyApp() : Application() {
 
     fun nextLoadFromList(){
         this.loadFromCoordsBool = false
-    }
-
-    fun getDatabase(): MyDB? {
-        return myDatabase
     }
 
     fun getTown(): String {
@@ -60,11 +50,10 @@ class MyApp() : Application() {
 
     fun changeTown(newTown: String) {
         this.mtown = newTown
-        this.myUrl = "weather?q=$mtown&appid=53c6e39cf3ee11a1d7549ffea83d6bd8&units=metric&lang=ru"
     }
 
     fun setUrl(url: String){
-        this.myUrl = curLocUrl
+        this.myUrl = url
     }
 
     fun setLat(lat:String){

@@ -1,4 +1,4 @@
-package com.example.weatherproj
+package com.example.weatherproj.modules
 
 import android.content.Context
 import dagger.Module

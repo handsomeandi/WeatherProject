@@ -1,4 +1,4 @@
-package com.example.weatherproj.weatherobjects
+package com.example.weatherproj.views
 
 import com.example.weatherproj.weatherobjects.Weather
 import moxy.MvpView

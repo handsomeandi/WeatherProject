@@ -16,8 +16,11 @@ import androidx.lifecycle.LiveData
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.lifecycle.Observer
 import com.example.weatherproj.*
-import com.example.weatherproj.weatherobjects.WeatherPresenter
-import com.example.weatherproj.weatherobjects.WeatherView
+import com.example.weatherproj.databaseobjects.TownClass
+import com.example.weatherproj.networkobjects.Resource
+import com.example.weatherproj.networkobjects.Status
+import com.example.weatherproj.presenters.WeatherPresenter
+import com.example.weatherproj.views.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
 import com.google.gson.Gson
 import moxy.MvpAppCompatFragment
@@ -89,24 +92,10 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
 //        weatherPresenter.deleteAllTowns()
 
         if(MyApp.minstance!!.loadFromCoords()){
-            setupObserver(weatherPresenter.loadCurlocWeatherFromApi())
-            MyApp.minstance!!.nextLoadFromList()
+            loadFromCurrent()
         }else{
-
-            if(weatherFromShared!!.length > 0 && weatherFromShared != null && weatherFromShared != "null"){
-                var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
-                var currentTownName : String = MyApp.minstance!!.getTown()
-                if(currentTownName == weatherParsed.getTownName()){
-                    weatherPresenter.loadFromShared(weatherFromShared)
-                }else{
-                    setupObserver(weatherPresenter.loadDataFromApi())
-                }
-            }else{
-                setupObserver(weatherPresenter.loadDataFromApi())
-            }
+            loadFromData(weatherFromShared!!)
         }
-
-      //  sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
 
         if(swipeWeather != null)    {
             swipeWeather.setOnRefreshListener{
@@ -118,29 +107,34 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
             }
         }
 
-
-
-
     }
 
+    private fun loadFromData(weatherFromShared : String){
+        if(weatherFromShared.isNotEmpty()){
+            var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
+            var currentTownName : String = MyApp.minstance!!.getTown()
+            if(currentTownName == weatherParsed.getTownName()){
+                weatherPresenter.loadFromShared(weatherFromShared)
+            }else{
+                setupObserver(weatherPresenter.loadDataFromApi())
+            }
+        }else{
+            setupObserver(weatherPresenter.loadDataFromApi())
+        }
+    }
 
+    private fun loadFromCurrent(){
+        setupObserver(weatherPresenter.loadCurlocWeatherFromApi())
+        MyApp.minstance!!.nextLoadFromList()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         MyApp.minstance!!.component!!.inject(this)
-
         super.onCreate(savedInstanceState)
-
-
-        //
-
-
     }
 
-    //TODO: Сделать добавление текущего города в базу данных
 
     private fun setupObserver(liveData : LiveData<Resource<Weather>>) {
-//        if()
-//        weatherPresenter.loadDataFromApi()
         liveData.observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
@@ -153,7 +147,6 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
                             if(weatherPresenter.getTownByName(weather.getTownName()!!) == null){
                                 weatherPresenter.addTownToDb(town)
                             }
-//                            weatherPresenter.addTownToDb(town)
                             saveWeather(savedWeatherData, sharedPreferences)}
                             for (townObject in weatherPresenter.getAllTowns()){
                                 Log.d("track", "Town: " + townObject.name)
@@ -168,6 +161,8 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
             }
         })
     }
+
+
 
 
     private fun saveWeather(weather : String, sharedPreferences: SharedPreferences){

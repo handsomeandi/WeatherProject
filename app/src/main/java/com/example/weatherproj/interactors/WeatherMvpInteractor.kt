@@ -1,4 +1,4 @@
-package com.example.weatherproj
+package com.example.weatherproj.interactors
 
 interface WeatherMvpInteractor {
     fun changeTown(town: String)

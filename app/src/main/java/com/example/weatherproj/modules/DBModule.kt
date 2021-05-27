@@ -1,13 +1,12 @@
-package com.example.weatherproj
+package com.example.weatherproj.modules
 
 import android.content.Context
 import androidx.room.Room
+import com.example.weatherproj.databaseobjects.MyDB
+import com.example.weatherproj.databaseobjects.TownDao
 import com.example.weatherproj.Urls.Companion.DB_NAME
-import com.example.weatherproj.networkobjects.ServerApi
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
 import javax.inject.Singleton
 
 

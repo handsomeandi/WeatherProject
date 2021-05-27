@@ -1,5 +1,7 @@
-package com.example.weatherproj
+package com.example.weatherproj.interactors
 
+import com.example.weatherproj.databaseobjects.TownClass
+import com.example.weatherproj.weatherobjects.WeatherRepository
 import javax.inject.Inject
 
 class DBInteractor @Inject constructor(

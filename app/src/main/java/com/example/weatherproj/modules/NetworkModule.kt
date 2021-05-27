@@ -1,10 +1,12 @@
-package com.example.weatherproj.networkobjects
+package com.example.weatherproj.modules
 
 import com.example.weatherproj.Urls
+import com.example.weatherproj.networkobjects.ServerApi
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -26,8 +28,16 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideClient(): OkHttpClient.Builder {
-        return OkHttpClient.Builder()
+    fun provideClient(interceptor: HttpLoggingInterceptor): OkHttpClient.Builder {
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        return OkHttpClient.Builder().addInterceptor(interceptor)
+    }
+
+    @Singleton
+    @Provides
+    fun provideLogger() : HttpLoggingInterceptor {
+        return HttpLoggingInterceptor()
     }
 
     @Singleton
@@ -36,9 +46,6 @@ class NetworkModule {
         return retrofit.create(ServerApi::class.java)
     }
 
-//    @Singleton
-//    @Provides
-//    fun provideWeatherApiHelper(serverApi: ServerApi) : ApiHelper{
-//        return ApiHelper(serverApi)
-//    }
+
+
 }

@@ -1,14 +1,14 @@
-package com.example.weatherproj.networkobjects
+package com.example.weatherproj
 
 import android.content.Context
-import com.example.weatherproj.*
+import com.example.weatherproj.databaseobjects.MyDB
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
-import com.example.weatherproj.townsobjects.TownsPresenter
-import com.example.weatherproj.weatherobjects.WeatherPresenter
+import com.example.weatherproj.modules.ContextModule
+import com.example.weatherproj.modules.DBModule
+import com.example.weatherproj.modules.NetworkModule
+import com.example.weatherproj.networkobjects.ServerApi
 import dagger.Component
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Singleton
@@ -17,9 +17,6 @@ interface MainComponent {
     fun getServerApi(): ServerApi
     fun getDatabase() : MyDB
     fun getContext() : Context
-//    fun getWeatherApiHelper() : ApiHelper
     fun inject(townsFragment: TownsFragment)
     fun inject(weatherFragment: WeatherFragment)
-    //fun inject(townsPresenter: TownsPresenter)
-   // fun inject(weatherPresenter: WeatherPresenter)
 }

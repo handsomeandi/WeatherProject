@@ -1,10 +1,10 @@
-package com.example.weatherproj
+package com.example.weatherproj.interactors
 
-import com.example.weatherproj.weatherobjects.Weather
+import com.example.weatherproj.weatherobjects.WeatherRepository
 import javax.inject.Inject
 
 
-class WeatherInteractor @Inject constructor(
+class NetworkInteractor @Inject constructor(
     var mWeatherRepository: WeatherRepository
 ) : WeatherMvpInteractor {
 
@@ -22,16 +22,8 @@ class WeatherInteractor @Inject constructor(
         return mWeatherRepository.getWeatherTown()
     }
 
-    fun loadDataFromApi() : Weather?{
-        return mWeatherRepository.loadDataFromApi()
-    }
-
     suspend fun getWeather() =  mWeatherRepository.getWeather()
 
     suspend fun getCurLocWeather() = mWeatherRepository.getCurLocWeather()
 
-
-//    fun insertTown(town: TownClass){
-//        mWeatherRepository.addTown(town)
-//    }
 }

@@ -1,4 +1,4 @@
-package com.example.weatherproj
+package com.example.weatherproj.views
 
 import androidx.fragment.app.Fragment
 import moxy.InjectViewState

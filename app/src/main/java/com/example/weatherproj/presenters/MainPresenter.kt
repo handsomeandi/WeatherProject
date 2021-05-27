@@ -1,8 +1,9 @@
-package com.example.weatherproj
+package com.example.weatherproj.presenters
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.example.weatherproj.views.MainView
+import com.example.weatherproj.Urls
 import moxy.InjectViewState
 import moxy.MvpPresenter
 

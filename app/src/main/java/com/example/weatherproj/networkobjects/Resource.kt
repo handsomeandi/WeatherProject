@@ -1,4 +1,4 @@
-package com.example.weatherproj
+package com.example.weatherproj.networkobjects
 
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
 

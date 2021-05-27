@@ -1,14 +1,15 @@
-package com.example.weatherproj.townsobjects
+package com.example.weatherproj.presenters
 
-import com.example.weatherproj.*
-import com.example.weatherproj.networkobjects.MainComponent
-import com.example.weatherproj.networkobjects.NetworkModule
+import com.example.weatherproj.databaseobjects.TownClass
+import com.example.weatherproj.interactors.DBInteractor
+import com.example.weatherproj.interactors.NetworkInteractor
+import com.example.weatherproj.views.TownsView
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class TownsPresenter @Inject constructor(private val weatherInteractor: WeatherInteractor, private val dbInteractor : DBInteractor) : MvpPresenter<TownsView>()  {
+class TownsPresenter @Inject constructor(private val networkInteractor: NetworkInteractor, private val dbInteractor : DBInteractor) : MvpPresenter<TownsView>()  {
 
 
     override fun onFirstViewAttach() {
@@ -17,12 +18,10 @@ class TownsPresenter @Inject constructor(private val weatherInteractor: WeatherI
     }
 
     fun changeTown(town : String){
-        weatherInteractor.changeTown(town)
+        networkInteractor.changeTown(town)
     }
 
     fun addTownToDB(town: TownClass){
-        //MyApp.minstance!!.component!!.inject(this)
-
         dbInteractor.addTown(town)
     }
 
@@ -33,10 +32,6 @@ class TownsPresenter @Inject constructor(private val weatherInteractor: WeatherI
     fun deleteAllTowns(){
         dbInteractor.deleteAllTowns()
     }
-
-//    fun getTownByName(name : String) : TownClass?{
-//        return dbInteractor.getTownByName(name)
-//    }
 
     fun getAllTownNames() : List<String>{
         var names : ArrayList<String> = ArrayList()
