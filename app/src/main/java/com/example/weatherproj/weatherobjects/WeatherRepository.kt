@@ -15,12 +15,12 @@ class WeatherRepository @Inject constructor(
     var serverApi : ServerApi,
     var dbDao: TownDao
 ){
-    val gson = Gson()
-    val appSharedPreferences = MainApp.instance!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
-    val editor = appSharedPreferences.edit()
+    private val gson = Gson()
+    private val appSharedPreferences = MainApp.instance!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
+    private val editor = appSharedPreferences.edit()
 
 
-    suspend fun gettWeaather(sharedPreferences: SharedPreferences, forceApiLoad : Boolean = false) : Weather?{
+    suspend fun getWeather(sharedPreferences: SharedPreferences, forceApiLoad : Boolean = false) : Weather?{
         if(loadFromCoords()){
             nextLoadFromList()
             return loadFromCurrent()
@@ -34,7 +34,6 @@ class WeatherRepository @Inject constructor(
         var weatherFromShared : String? = sharedPreferences.getString(Urls.MY_WEATHER,"")
         var townNameFromShared : String = gson.fromJson(weatherFromShared,TownClass::class.java).name.toString()
         if(weatherFromShared !=null && weatherFromShared.isNotEmpty() && townNameFromShared == getTown() && !forceApiLoad){
-            Log.d("track", "loaded from shared")
             return loadFromShared(weatherFromShared)
         }else{
             return serverApi.getWeatherData(getTown()!!)
@@ -62,27 +61,16 @@ class WeatherRepository @Inject constructor(
         return dbDao.getAll()
     }
 
-    fun getTownByName(name : String) : TownClass?{
-        return dbDao.getTownByName(name)
-    }
-
-    fun deleteAllTowns(){
-        dbDao.deleteAll()
-    }
-
-
-    fun loadFromCoords() : Boolean{
-        val kek = appSharedPreferences.getBoolean(Urls.LOAD_FROM_LOC,true)
+    private fun loadFromCoords() : Boolean{
         return appSharedPreferences.getBoolean(Urls.LOAD_FROM_LOC,true)
     }
 
-    fun nextLoadFromList(){
+    private fun nextLoadFromList(){
         editor.putBoolean(Urls.LOAD_FROM_LOC, false)
         editor.apply()
     }
 
-    fun getTown(): String? {
-        val townchek = appSharedPreferences.getString(Urls.CURRENT_TOWN,"")
+    private fun getTown(): String? {
         return appSharedPreferences.getString(Urls.CURRENT_TOWN,"")
     }
 
@@ -91,11 +79,11 @@ class WeatherRepository @Inject constructor(
         editor.apply()
     }
 
-    fun getLon() : String?{
+    private fun getLon() : String?{
         return appSharedPreferences.getString(Urls.LONGITUDE,"")
     }
 
-    fun getLat() : String?{
+    private fun getLat() : String?{
         return appSharedPreferences.getString(Urls.LATITUDE,"")
     }
 

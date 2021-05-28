@@ -29,10 +29,10 @@ class MainActivity : MvpAppCompatActivity() {
 
     private lateinit var fragManager: FragmentManager
 
-    lateinit var fusedLocationClient: FusedLocationProviderClient
-    lateinit var locationRequest : LocationRequest
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest : LocationRequest
 
-    var PERMISSION_ID = 1000
+    private var PERMISSION_ID = 1000
 
 
 

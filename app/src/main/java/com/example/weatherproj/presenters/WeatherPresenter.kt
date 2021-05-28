@@ -23,7 +23,7 @@ class WeatherPresenter @Inject constructor(var networkInteractor : NetworkIntera
 
     fun onWeatherRequired(sharedPreferences: SharedPreferences,forceApiLoad : Boolean = false){
         scope.launch {
-            val data = async(context = Dispatchers.IO){networkInteractor.getWeatherTest(sharedPreferences,forceApiLoad)}
+            val data = async(context = Dispatchers.IO){networkInteractor.getWeather(sharedPreferences,forceApiLoad)}
             withContext(Dispatchers.Main) {onWeatherReceived(data.await())}
         }
     }

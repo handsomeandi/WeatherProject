@@ -71,11 +71,11 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
         }
         weatherPresenter.onWeatherRequired(sharedPreferences)
 
-        if(swipeWeather != null)    {
-            swipeWeather.setOnRefreshListener{
+       // if(swipeWeather != null)    {
+            swipeWeather?.setOnRefreshListener{
                 weatherPresenter.onWeatherRequired(sharedPreferences,true)
             }
-        }
+     //   }
 
     }
 
@@ -87,51 +87,37 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     override fun showWeather(weather: Weather?) {
         if(weather!=null){
             swipeWeather.isRefreshing = false
-            sunset.setText(
-                java.lang.String.format(
-                    "%s%s",
-                    getString(R.string.sunset_string),
-                    weather.getSunset()
-                )
+            sunset.text = java.lang.String.format(
+                "%s%s",
+                getString(R.string.sunset_string),
+                weather.getSunset()
             )
-            wetness.setText(
-                java.lang.String.format(
-                    "%s%s",
-                    getString(R.string.wetness_string),
-                    weather.getHumidity()
-                )
+            wetness.text = java.lang.String.format(
+                "%s%s",
+                getString(R.string.wetness_string),
+                weather.getHumidity()
             )
-            wind_speed.setText(
-                java.lang.String.format(
-                    "%s%s",
-                    getString(R.string.wind_speed_string),
-                    weather.getWindSpeed()
-                )
+            wind_speed.text = java.lang.String.format(
+                "%s%s",
+                getString(R.string.wind_speed_string),
+                weather.getWindSpeed()
             )
-            weather_cond.setText(
-                java.lang.String.format(
-                    "%s%s",
-                    getString(R.string.weather_cond_string),
-                    weather.getWeatherConditions()
-                )
+            weather_cond.text = java.lang.String.format(
+                "%s%s",
+                getString(R.string.weather_cond_string),
+                weather.getWeatherConditions()
             )
-            sunrise.setText(
-                java.lang.String.format(
-                    "%s%s",
-                    getString(R.string.sunrise_string),
-                    weather.getSunrise()
-                )
+            sunrise.text = java.lang.String.format(
+                "%s%s",
+                getString(R.string.sunrise_string),
+                weather.getSunrise()
             )
-            current_temp.setText(
-                java.lang.String.format(
-                    "%s%s C",
-                    getString(R.string.current_temp_string),
-                    weather.getTemp()
-                )
+            current_temp.text = java.lang.String.format(
+                "%s%s C",
+                getString(R.string.current_temp_string),
+                weather.getTemp()
             )
-            townName.setText(
-                java.lang.String.format("%s%s",getString(R.string.town_string), weather.getTownName())
-            )
+            townName.text = java.lang.String.format("%s%s",getString(R.string.town_string), weather.getTownName())
         }
     }
 
