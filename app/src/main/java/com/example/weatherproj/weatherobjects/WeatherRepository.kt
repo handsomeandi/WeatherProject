@@ -51,7 +51,7 @@ class WeatherRepository @Inject constructor(
 
     fun addTown(town : TownClass){
         for (checkTown in dbDao.getAll()){
-            if(checkTown.name == town.name){
+            if(checkTown.name == town.name || town.name.isNullOrBlank()){
                 return
             }
         }
