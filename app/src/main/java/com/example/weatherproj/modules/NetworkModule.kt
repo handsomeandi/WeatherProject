@@ -29,7 +29,7 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideClient(interceptor: HttpLoggingInterceptor): OkHttpClient.Builder {
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
 
         return OkHttpClient.Builder().addInterceptor(interceptor)
     }

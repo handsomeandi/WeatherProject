@@ -1,5 +1,6 @@
 package com.example.weatherproj
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
@@ -16,16 +17,12 @@ import com.example.weatherproj.Urls.Companion.FRAGMENT_CHANGE
 import com.example.weatherproj.fragments.InfoFragment
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
-import com.example.weatherproj.presenters.MainPresenter
-import com.example.weatherproj.views.MainView
 import com.google.android.gms.location.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import moxy.MvpAppCompatActivity
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
 
-class MainActivity : MvpAppCompatActivity(), MainView {
+class MainActivity : MvpAppCompatActivity() {
 
     private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var fragTrans: FragmentTransaction
@@ -38,13 +35,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     var PERMISSION_ID = 1000
 
 
-    @InjectPresenter
-    lateinit var mainPresenter: MainPresenter
-
-    @ProvidePresenter
-    fun provideMainPresenter() : MainPresenter {
-        return MainPresenter()
-    }
 
     private fun checkPermissions():Boolean{
         if(ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -68,7 +58,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         fragManager = supportFragmentManager
         fragTrans = fragManager.beginTransaction()
-        lateinit var myFrag : Fragment
         bottomNavigationView = findViewById(com.example.weatherproj.R.id.bottomNav)
 
 
@@ -79,6 +68,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
 
         registerReceiver()
+
 
 
 
@@ -102,6 +92,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             .registerReceiver(act2InitReceiver, IntentFilter("change fragment"))
     }
 
+    @SuppressLint("MissingPermission")
     private fun getLastLocation(){
         if(checkPermissions()){
             fusedLocationClient.lastLocation.addOnCompleteListener{task ->
@@ -120,7 +111,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     private fun getNewLocation(){
-        locationRequest = LocationRequest()
+        locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 0
         locationRequest.fastestInterval = 0
@@ -135,7 +126,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         ) {
             return
         }
-        fusedLocationClient!!.requestLocationUpdates(locationRequest,
+        fusedLocationClient.requestLocationUpdates(locationRequest,
             locationCallback,Looper.myLooper()
         )
     }
@@ -150,9 +141,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     private fun setCurLoc(lat:String,lon:String){
-        MyApp.minstance!!.setLat(lat)
-        MyApp.minstance!!.setLon(lon)
-        MyApp.minstance!!.setUrl(Urls.URL_BY_COORD)
+        val myAppShared = MainApp.instance!!.getSharedPreferences(Urls.MY_PREFS,Context.MODE_PRIVATE)
+        val editor = myAppShared.edit()
+        editor.putString(Urls.LATITUDE,lat)
+        editor.putString(Urls.LONGITUDE,lon)
+        editor.apply()
     }
 
     override fun onRequestPermissionsResult(
@@ -174,16 +167,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
 
-    override fun onStop() {
-        super.onStop()
-
-        val sharedPreferences: SharedPreferences =
-            this.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
-        mainPresenter.removeWeatherFromShared(sharedPreferences)
-
-    }
-
-    override fun changeFrag(id : Int){
+    fun changeFrag(id : Int){
         var myFrag : Fragment? = null
         when(id){
             R.id.weatherPage -> {

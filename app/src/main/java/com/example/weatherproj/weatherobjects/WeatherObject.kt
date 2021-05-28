@@ -10,7 +10,4 @@ class WeatherObject {
         return description
     }
 
-    fun setDescription(description: String?) {
-        this.description = description
-    }
 }

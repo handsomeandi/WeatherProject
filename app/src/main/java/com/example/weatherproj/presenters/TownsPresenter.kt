@@ -12,35 +12,23 @@ import javax.inject.Inject
 class TownsPresenter @Inject constructor(private val networkInteractor: NetworkInteractor, private val dbInteractor : DBInteractor) : MvpPresenter<TownsView>()  {
 
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
 
-    }
-
-    fun changeTown(town : String){
-        networkInteractor.changeTown(town)
-    }
-
-    fun addTownToDB(town: TownClass){
+    fun onAddButtonClick(town:TownClass){
         dbInteractor.addTown(town)
+        viewState.updateList(dbInteractor.getAllTowns())
     }
 
-    fun getAllTowns() : List<TownClass>{
-        return dbInteractor.getAllTowns()
+    fun onTownsRequired(){
+        var towns: List<TownClass> = dbInteractor.getAllTowns()
+        onTownsReceived(towns)
     }
 
-    fun deleteAllTowns(){
-        dbInteractor.deleteAllTowns()
+    private fun onTownsReceived(towns:List<TownClass>){
+        viewState.updateList(towns)
     }
 
-    fun getAllTownNames() : List<String>{
-        var names : ArrayList<String> = ArrayList()
-        for (town in getAllTowns()){
-            names.add(town.name.toString())
-        }
-        return names
+    fun onTownClicked(town: TownClass){
+        networkInteractor.changeTown(town)
+        viewState.switchToWeatherFrag()
     }
-
-
-
 }

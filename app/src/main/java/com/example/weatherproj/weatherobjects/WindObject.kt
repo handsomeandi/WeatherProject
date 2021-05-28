@@ -9,8 +9,4 @@ class WindObject {
     fun getSpeed(): String? {
         return speed
     }
-
-    fun setSpeed(speed: String?) {
-        this.speed = speed
-    }
 }

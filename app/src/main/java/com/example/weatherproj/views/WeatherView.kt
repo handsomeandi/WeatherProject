@@ -8,5 +8,6 @@ import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(value = AddToEndStrategy::class)
 interface WeatherView : MvpView {
-    fun showWeather(weather : Weather)
+    fun showWeather(weather : Weather?)
+    fun saveWeather(weather: Weather?)
 }

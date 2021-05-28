@@ -1,29 +1,22 @@
 package com.example.weatherproj.interactors
 
+import android.content.SharedPreferences
+import com.example.weatherproj.databaseobjects.TownClass
+import com.example.weatherproj.weatherobjects.Weather
 import com.example.weatherproj.weatherobjects.WeatherRepository
 import javax.inject.Inject
 
 
 class NetworkInteractor @Inject constructor(
     var mWeatherRepository: WeatherRepository
-) : WeatherMvpInteractor {
+){
 
-
-
-    override fun changeTown(town: String) {
-        mWeatherRepository.setWeatherTown(town)
+    suspend fun getWeatherTest(sharedPreferences: SharedPreferences,forceApiLoad:Boolean = false) : Weather? {
+        return mWeatherRepository.gettWeaather(sharedPreferences, forceApiLoad)
     }
 
-    override fun getUrl() : String? {
-        return mWeatherRepository.getWeatherUrl()
+    fun changeTown(town: TownClass) {
+        mWeatherRepository.changeTown(town.name.toString())
     }
-
-    override fun getTown(): String {
-        return mWeatherRepository.getWeatherTown()
-    }
-
-    suspend fun getWeather() =  mWeatherRepository.getWeather()
-
-    suspend fun getCurLocWeather() = mWeatherRepository.getCurLocWeather()
 
 }

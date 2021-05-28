@@ -13,15 +13,8 @@ class SunObject{
         return sunset
     }
 
-    fun setSunset(sunset: Long) {
-        this.sunset = sunset
-    }
-
     fun getSunrise(): Long {
         return sunrise
     }
 
-    fun setSunrise(sunrise: Long) {
-        this.sunrise = sunrise
-    }
 }

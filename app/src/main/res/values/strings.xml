@@ -3,11 +3,20 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="err">Error</string>
-    <string name="sunset">Закат: </string>
-    <string name="humidity">Влажность: </string>
-    <string name="wind_speed">Скорость ветра: </string>
-    <string name="weather_cond">Погодные условия: </string>
-    <string name="sunrise">Рассвет: </string>
-    <string name="current_temp">Текущая температура: </string>
-    <string name="town_name">"Город: "</string>
+    <string name="fio_string">Ф.И.О.</string>
+    <string name="phoneNum_string">Номер телефона</string>
+    <string name="github_string">Github</string>
+    <string name="libraries_string">Используемые библиотеки</string>
+    <string name="fio_value_string">Дегтярев Артур Русланович</string>
+    <string name="phoneNum_value_string">+79788003158</string>
+    <string name="github_value_string">https://github.com/handsomeandi</string>
+    <string name="libraries_value_string">Retrofit, Dagger2, Moxy, Coroutines</string>
+    <string name="addLabel_string">Добавить</string>
+    <string name="current_temp_string">Текущая температура: </string>
+    <string name="sunset_string">Закат: </string>
+    <string name="weather_cond_string">Погодные условия: </string>
+    <string name="wind_speed_string">Скорость ветра: </string>
+    <string name="wetness_string">Влажность: </string>
+    <string name="sunrise_string">Восход: </string>
+    <string name="town_string">Город: </string>
 </resources>

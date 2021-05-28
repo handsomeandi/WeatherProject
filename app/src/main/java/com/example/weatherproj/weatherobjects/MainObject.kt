@@ -14,15 +14,9 @@ class MainObject {
         return temp
     }
 
-    fun setTemp(temp: String?) {
-        this.temp = temp
-    }
 
     fun getHumidity(): String? {
         return humidity
     }
 
-    fun setHumidity(humidity: String?) {
-        this.humidity = humidity
-    }
 }

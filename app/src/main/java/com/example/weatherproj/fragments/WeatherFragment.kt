@@ -4,21 +4,12 @@ package com.example.weatherproj.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.lifecycle.Observer
 import com.example.weatherproj.*
-import com.example.weatherproj.databaseobjects.TownClass
-import com.example.weatherproj.networkobjects.Resource
-import com.example.weatherproj.networkobjects.Status
 import com.example.weatherproj.presenters.WeatherPresenter
 import com.example.weatherproj.views.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
@@ -30,21 +21,8 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [WeatherFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     WeatherView {
-
-
-    // TODO: Rename and change types of parameters
     private lateinit var sunset : TextView
     private lateinit var wetness : TextView
     private lateinit var wind_speed : TextView
@@ -53,7 +31,7 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     private lateinit var townName : TextView
     private lateinit var current_temp : TextView
     private lateinit var swipeWeather : SwipeRefreshLayout
-    val ERROR = "ERROR"
+
     var gson : Gson = Gson()
     lateinit var sharedPreferences : SharedPreferences
 
@@ -85,168 +63,96 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
         swipeWeather = view.findViewById(R.id.swipeWeather)
         townName = view.findViewById(R.id.townName)
 
-        sharedPreferences =  activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
-        var weatherFromShared : String? = sharedPreferences.getString(
-            Urls.MY_WEATHER,"")
 
-//        weatherPresenter.deleteAllTowns()
 
-        if(MyApp.minstance!!.loadFromCoords()){
-            loadFromCurrent()
-        }else{
-            loadFromData(weatherFromShared!!)
+
+        if(activity!=null) {
+            sharedPreferences = activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
         }
+        weatherPresenter.onWeatherRequired(sharedPreferences)
 
         if(swipeWeather != null)    {
             swipeWeather.setOnRefreshListener{
-                Handler().postDelayed(Runnable {
-                    weatherPresenter.removeWeather(sharedPreferences)
-                    setupObserver(weatherPresenter.loadDataFromApi())
-                    swipeWeather.isRefreshing = false
-                }, 1000)
+                weatherPresenter.onWeatherRequired(sharedPreferences,true)
             }
         }
 
-    }
-
-    private fun loadFromData(weatherFromShared : String){
-        if(weatherFromShared.isNotEmpty()){
-            var weatherParsed : Weather = gson.fromJson(weatherFromShared, Weather::class.java)
-            var currentTownName : String = MyApp.minstance!!.getTown()
-            if(currentTownName == weatherParsed.getTownName()){
-                weatherPresenter.loadFromShared(weatherFromShared)
-            }else{
-                setupObserver(weatherPresenter.loadDataFromApi())
-            }
-        }else{
-            setupObserver(weatherPresenter.loadDataFromApi())
-        }
-    }
-
-    private fun loadFromCurrent(){
-        setupObserver(weatherPresenter.loadCurlocWeatherFromApi())
-        MyApp.minstance!!.nextLoadFromList()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        MyApp.minstance!!.component!!.inject(this)
+        MainApp.instance!!.component!!.inject(this)
         super.onCreate(savedInstanceState)
     }
 
-
-    private fun setupObserver(liveData : LiveData<Resource<Weather>>) {
-        liveData.observe(this, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { weather -> showWeather(weather)
-                            MyApp.minstance!!.changeTown(weather.getTownName()!!)
-                            Log.d("track", "loaded from api")
-                            var savedWeatherData : String = gson.toJson(weather!!)
-                            var town = TownClass(weather.getTownName())
-                            if(weatherPresenter.getTownByName(weather.getTownName()!!) == null){
-                                weatherPresenter.addTownToDb(town)
-                            }
-                            saveWeather(savedWeatherData, sharedPreferences)}
-                            for (townObject in weatherPresenter.getAllTowns()){
-                                Log.d("track", "Town: " + townObject.name)
-                            }
-                    }
-                    Status.ERROR -> {
-                        Toast.makeText( activity,it.message!!,Toast.LENGTH_SHORT)
-                    }
-                    Status.LOADING -> {
-                    }
-                }
-            }
-        })
-    }
-
-
-
-
-    private fun saveWeather(weather : String, sharedPreferences: SharedPreferences){
-        val editor = sharedPreferences.edit()
-        editor.remove(Urls.MY_WEATHER)
-        editor.putString(Urls.MY_WEATHER, weather)
-        editor.commit()
-
-        Log.d("SharedPrefs", sharedPreferences.getString(Urls.MY_WEATHER, "")!!)
-    }
-
-
-
-    override fun showWeather(weather: Weather) {
-        sunset.setText(
-            java.lang.String.format(
-                "%s%s",
-                getString(R.string.sunset),
-                weather.getSunset()
+    override fun showWeather(weather: Weather?) {
+        if(weather!=null){
+            swipeWeather.isRefreshing = false
+            sunset.setText(
+                java.lang.String.format(
+                    "%s%s",
+                    getString(R.string.sunset_string),
+                    weather.getSunset()
+                )
             )
-        )
-        wetness.setText(
-            java.lang.String.format(
-                "%s%s",
-                getString(R.string.humidity),
-                weather.getHumidity()
+            wetness.setText(
+                java.lang.String.format(
+                    "%s%s",
+                    getString(R.string.wetness_string),
+                    weather.getHumidity()
+                )
             )
-        )
-        wind_speed.setText(
-            java.lang.String.format(
-                "%s%s",
-                getString(R.string.wind_speed),
-                weather.getWindSpeed()
+            wind_speed.setText(
+                java.lang.String.format(
+                    "%s%s",
+                    getString(R.string.wind_speed_string),
+                    weather.getWindSpeed()
+                )
             )
-        )
-        weather_cond.setText(
-            java.lang.String.format(
-                "%s%s",
-                getString(R.string.weather_cond),
-                weather.getWeatherConditions()
+            weather_cond.setText(
+                java.lang.String.format(
+                    "%s%s",
+                    getString(R.string.weather_cond_string),
+                    weather.getWeatherConditions()
+                )
             )
-        )
-        sunrise.setText(
-            java.lang.String.format(
-                "%s%s",
-                getString(R.string.sunrise),
-                weather.getSunrise()
+            sunrise.setText(
+                java.lang.String.format(
+                    "%s%s",
+                    getString(R.string.sunrise_string),
+                    weather.getSunrise()
+                )
             )
-        )
-        current_temp.setText(
-            java.lang.String.format(
-                "%s%s C",
-                getString(R.string.current_temp),
-                weather.getTemp()
+            current_temp.setText(
+                java.lang.String.format(
+                    "%s%s C",
+                    getString(R.string.current_temp_string),
+                    weather.getTemp()
+                )
             )
-        )
-        townName.setText(
-            java.lang.String.format("%s%s",getString(R.string.town_name), weather.getTownName())
-        )
+            townName.setText(
+                java.lang.String.format("%s%s",getString(R.string.town_string), weather.getTownName())
+            )
+        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_weather, container, false)
     }
 
 
-
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment WeatherFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-            WeatherFragment().apply {
-            }
+            WeatherFragment()
+    }
+
+    override fun saveWeather(weather: Weather?) {
+        val editor = sharedPreferences.edit()
+        editor.remove(Urls.MY_WEATHER)
+        editor.putString(Urls.MY_WEATHER, gson.toJson(weather))
+        editor.apply()
     }
 }

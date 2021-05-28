@@ -2,14 +2,12 @@ package com.example.weatherproj.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.weatherproj.MyApp
+import com.example.weatherproj.MainApp
 import com.example.weatherproj.R
 import com.example.weatherproj.databaseobjects.TownClass
 import com.example.weatherproj.Urls
@@ -22,28 +20,13 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TownsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, AdapterView.OnItemClickListener {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private lateinit var  changeCityBtn : Button
     private lateinit var  townEditText: EditText
-    private lateinit var townName : String
 
 
     private lateinit var townsListView : ListView
     private lateinit var adapter : ArrayAdapter<String>
-    private lateinit var listOfTowns : List<String>
 
     @InjectPresenter
     lateinit var townsPresenter: TownsPresenter
@@ -64,22 +47,13 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, A
         townEditText = view.findViewById(R.id.townEditText)
 
 
-        listOfTowns = townsPresenter.getAllTownNames()
+        townsPresenter.onTownsRequired()
 
-        adapter = object: ArrayAdapter<String>(
-            context!!,
-            android.R.layout.simple_list_item_1,
-            listOfTowns
-        ){
-        }
-        townsListView.adapter = adapter
-        townsListView.onItemClickListener = this
-        changeCityBtn.setOnClickListener(this)
 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        MyApp.minstance!!.component!!.inject(this)
+        MainApp.instance!!.component!!.inject(this)
         super.onCreate(savedInstanceState)
     }
 
@@ -93,41 +67,34 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, A
     companion object {
         @JvmStatic
         fun newInstance() =
-            TownsFragment().apply {
-            }
+            TownsFragment()
     }
 
     override fun updateList(towns: List<TownClass>) {
-        for (town in towns){
-            Log.d("trackDB", "name: " + town.name.toString() + " id:" + town.id)
+        var townNames:ArrayList<String> = ArrayList()
+        for(item in towns){
+            townNames.add(item.name.toString())
         }
-        listOfTowns = townsPresenter.getAllTownNames()
-        adapter.clear()
-        adapter.addAll(listOfTowns)
-    }
-
-    override fun addToList(town: String) {
-        var townObj : TownClass = TownClass(townName)
-        townsPresenter.changeTown(townName)
-        townsPresenter.addTownToDB(townObj)
+        adapter =  ArrayAdapter(
+            context!!,
+            android.R.layout.simple_list_item_1,
+            townNames
+        )
+        townsListView.adapter = adapter
+        townsListView.onItemClickListener = this
+        changeCityBtn.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
-        if(v != null){
-            when(v.id){
-                R.id.addTownBtn -> if(!townEditText.text.isEmpty()){
-                    townName = townEditText.text.toString()
-                    addToList(townName)
-                    var savedTowns : List<TownClass> = townsPresenter.getAllTowns()
-                    updateList(savedTowns)
-                }
-            }
-        }
+        townsPresenter.onAddButtonClick(TownClass(townEditText.text.toString()))
     }
 
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        townsPresenter.changeTown(townsListView.getItemAtPosition(position).toString())
+        townsPresenter.onTownClicked(TownClass(townsListView.getItemAtPosition(position).toString()))
+    }
+
+    override fun switchToWeatherFrag() {
         if(activity != null){
             LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent("change fragment").putExtra(
             Urls.FRAGMENT_CHANGE, Urls.BOTTOM_NAV_WEATHER_PAGE_ID))

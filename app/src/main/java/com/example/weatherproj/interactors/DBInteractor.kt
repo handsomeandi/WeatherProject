@@ -14,12 +14,4 @@ class DBInteractor @Inject constructor(
     fun getAllTowns() : List<TownClass>{
         return mWeatherRepository.getAllTowns()
     }
-
-    fun getTownByName(townName : String) : TownClass?{
-        return mWeatherRepository.getTownByName(townName)
-    }
-
-    fun deleteAllTowns(){
-        mWeatherRepository.deleteAllTowns()
-    }
 }

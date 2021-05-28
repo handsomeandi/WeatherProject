@@ -14,9 +14,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [NetworkModule::class, DBModule::class, ContextModule::class])
 interface MainComponent {
-    fun getServerApi(): ServerApi
-    fun getDatabase() : MyDB
-    fun getContext() : Context
     fun inject(townsFragment: TownsFragment)
     fun inject(weatherFragment: WeatherFragment)
 }
