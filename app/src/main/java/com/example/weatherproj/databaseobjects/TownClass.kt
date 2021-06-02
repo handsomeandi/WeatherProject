@@ -4,9 +4,9 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.weatherproj.Urls
+import com.example.weatherproj.utils.Constants
 
-@Entity(tableName = Urls.TOWN_TABLE)
+@Entity(tableName = Constants.TOWN_TABLE)
 data class TownClass(
     @ColumnInfo(name = "name")
     val name: String?,

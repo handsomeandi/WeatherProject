@@ -1,6 +1,6 @@
 package com.example.weatherproj.modules
 
-import com.example.weatherproj.Urls
+import com.example.weatherproj.utils.Constants
 import com.example.weatherproj.networkobjects.ServerApi
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
@@ -20,7 +20,7 @@ class NetworkModule {
         client.connectTimeout(30, TimeUnit.SECONDS)
         client.writeTimeout(60, TimeUnit.SECONDS)
         client.readTimeout(60, TimeUnit.SECONDS)
-        return Retrofit.Builder().baseUrl(Urls.BASE_URL).client(client.build())
+        return Retrofit.Builder().baseUrl(Constants.BASE_URL).client(client.build())
             .addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(
                 CoroutineCallAdapterFactory()
             ).build()

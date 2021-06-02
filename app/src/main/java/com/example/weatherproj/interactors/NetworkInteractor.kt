@@ -11,8 +11,8 @@ class NetworkInteractor @Inject constructor(
     var mWeatherRepository: WeatherRepository
 ){
 
-    suspend fun getWeather(sharedPreferences: SharedPreferences, forceApiLoad:Boolean = false) : Weather? {
-        return mWeatherRepository.getWeather(sharedPreferences, forceApiLoad)
+    suspend fun getWeather(forceApiLoad:Boolean = false) : Weather? {
+        return mWeatherRepository.getWeather(forceApiLoad)
     }
 
     fun changeTown(town: TownClass) {

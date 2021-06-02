@@ -1,6 +1,8 @@
-package com.example.weatherproj
+package com.example.weatherproj.utils
 
 import android.app.Application
+import com.example.weatherproj.DaggerMainComponent
+import com.example.weatherproj.MainComponent
 import com.example.weatherproj.modules.ContextModule
 import com.example.weatherproj.modules.DBModule
 import com.example.weatherproj.modules.NetworkModule

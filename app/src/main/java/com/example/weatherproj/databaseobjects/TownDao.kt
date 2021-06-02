@@ -1,18 +1,16 @@
 package com.example.weatherproj.databaseobjects
 
 import androidx.room.*
-import com.example.weatherproj.Urls
-import com.example.weatherproj.databaseobjects.TownClass
-import retrofit2.http.Url
+import com.example.weatherproj.utils.Constants
 
 
 @Dao
 interface TownDao {
-    @Query("SELECT * FROM " + Urls.TOWN_TABLE)
+    @Query("SELECT * FROM " + Constants.TOWN_TABLE)
     fun getAll(): List<TownClass>
 
 
-    @Query("SELECT * FROM " + Urls.TOWN_TABLE + " WHERE name = :name")
+    @Query("SELECT * FROM " + Constants.TOWN_TABLE + " WHERE name = :name")
     fun getTownByName(name:String?) : TownClass?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -21,7 +19,7 @@ interface TownDao {
     @Delete
     fun delete(user: TownClass)
 
-    @Query("DELETE FROM " + Urls.TOWN_TABLE)
+    @Query("DELETE FROM " + Constants.TOWN_TABLE)
     fun deleteAll()
 
 }

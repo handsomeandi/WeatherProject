@@ -7,10 +7,10 @@
     tools:context=".fragments.TownsFragment">
 
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/townsListView"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_width="wrap_content"
+        android:layout_height="500dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/townEditText"

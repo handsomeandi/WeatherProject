@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.weatherproj.databaseobjects.MyDB
 import com.example.weatherproj.databaseobjects.TownDao
-import com.example.weatherproj.Urls.Companion.DB_NAME
+import com.example.weatherproj.utils.Constants.Companion.DB_NAME
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

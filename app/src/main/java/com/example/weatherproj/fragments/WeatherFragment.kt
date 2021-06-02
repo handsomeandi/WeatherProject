@@ -1,8 +1,6 @@
 package com.example.weatherproj.fragments
 
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +9,7 @@ import android.widget.TextView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.weatherproj.*
 import com.example.weatherproj.presenters.WeatherPresenter
+import com.example.weatherproj.utils.MainApp
 import com.example.weatherproj.views.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
 import com.google.gson.Gson
@@ -33,7 +32,6 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     private lateinit var swipeWeather : SwipeRefreshLayout
 
     var gson : Gson = Gson()
-    lateinit var sharedPreferences : SharedPreferences
 
 
     @InjectPresenter
@@ -53,7 +51,6 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         sunset = view.findViewById(R.id.sunsetTv)
         sunrise = view.findViewById(R.id.sunriseTv)
         wind_speed = view.findViewById(R.id.githubLabel)
@@ -63,19 +60,10 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
         swipeWeather = view.findViewById(R.id.swipeWeather)
         townName = view.findViewById(R.id.townName)
 
-
-
-
-        if(activity!=null) {
-            sharedPreferences = activity!!.getSharedPreferences(Urls.MY_PREFS, Context.MODE_PRIVATE)
+        weatherPresenter.onWeatherRequired()
+        swipeWeather?.setOnRefreshListener{
+            weatherPresenter.onWeatherRequired(true)
         }
-        weatherPresenter.onWeatherRequired(sharedPreferences)
-
-       // if(swipeWeather != null)    {
-            swipeWeather?.setOnRefreshListener{
-                weatherPresenter.onWeatherRequired(sharedPreferences,true)
-            }
-     //   }
 
     }
 
@@ -135,10 +123,4 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
             WeatherFragment()
     }
 
-    override fun saveWeather(weather: Weather?) {
-        val editor = sharedPreferences.edit()
-        editor.remove(Urls.MY_WEATHER)
-        editor.putString(Urls.MY_WEATHER, gson.toJson(weather))
-        editor.apply()
-    }
 }

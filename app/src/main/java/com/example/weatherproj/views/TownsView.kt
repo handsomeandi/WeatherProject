@@ -9,6 +9,7 @@ import moxy.viewstate.strategy.StateStrategyType
 interface TownsView : MvpView{
 
     fun updateList(towns : List<TownClass>)
+    fun addItem(town: TownClass)
     fun switchToWeatherFrag()
 
 }

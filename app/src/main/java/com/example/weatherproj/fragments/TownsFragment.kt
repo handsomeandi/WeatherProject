@@ -7,10 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.weatherproj.MainApp
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherproj.utils.MainApp
 import com.example.weatherproj.R
 import com.example.weatherproj.databaseobjects.TownClass
-import com.example.weatherproj.Urls
+import com.example.weatherproj.utils.Constants
+import com.example.weatherproj.utils.TownsRecyclerViewAdapter
 import com.example.weatherproj.presenters.TownsPresenter
 import com.example.weatherproj.views.TownsView
 import moxy.MvpAppCompatFragment
@@ -20,13 +23,14 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 
-class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, AdapterView.OnItemClickListener {
+class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
     private lateinit var  changeCityBtn : Button
     private lateinit var  townEditText: EditText
 
 
-    private lateinit var townsListView : ListView
-    private lateinit var adapter : ArrayAdapter<String>
+    private lateinit var townsListView : RecyclerView
+    private lateinit var adapter : TownsRecyclerViewAdapter
+    var townNames:ArrayList<String> = ArrayList()
 
     @InjectPresenter
     lateinit var townsPresenter: TownsPresenter
@@ -45,8 +49,13 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, A
         townsListView = view.findViewById(R.id.townsListView)
         changeCityBtn = view.findViewById(R.id.addTownBtn)
         townEditText = view.findViewById(R.id.townEditText)
-
-
+        adapter = TownsRecyclerViewAdapter()
+        adapter.onClick = {
+            onItemClick(it)
+        }
+        townsListView.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+        townsListView.adapter = adapter
+        changeCityBtn.setOnClickListener(this)
         townsPresenter.onTownsRequired()
 
 
@@ -64,6 +73,10 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, A
         return inflater.inflate(R.layout.fragment_towns, container, false)
     }
 
+    override fun addItem(town: TownClass) {
+        adapter.addItem(town)
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() =
@@ -71,33 +84,21 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener, A
     }
 
     override fun updateList(towns: List<TownClass>) {
-        var townNames:ArrayList<String> = ArrayList()
-        for(item in towns){
-            townNames.add(item.name.toString())
-        }
-        adapter =  ArrayAdapter(
-            context!!,
-            android.R.layout.simple_list_item_1,
-            townNames
-        )
-        townsListView.adapter = adapter
-        townsListView.onItemClickListener = this
-        changeCityBtn.setOnClickListener(this)
+        adapter.setItems(towns)
     }
 
     override fun onClick(v: View?) {
         townsPresenter.onAddButtonClick(TownClass(townEditText.text.toString()))
     }
 
-
-    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        townsPresenter.onTownClicked(TownClass(townsListView.getItemAtPosition(position).toString()))
+    private fun onItemClick(town: TownClass){
+        townsPresenter.onTownClicked(town)
     }
 
     override fun switchToWeatherFrag() {
         if(activity != null){
             LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent("change fragment").putExtra(
-            Urls.FRAGMENT_CHANGE, Urls.BOTTOM_NAV_WEATHER_PAGE_ID))
+            Constants.FRAGMENT_CHANGE, Constants.BOTTOM_NAV_WEATHER_PAGE_ID))
         }
     }
 }

@@ -21,9 +21,9 @@ class WeatherPresenter @Inject constructor(var networkInteractor : NetworkIntera
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
 
-    fun onWeatherRequired(sharedPreferences: SharedPreferences,forceApiLoad : Boolean = false){
+    fun onWeatherRequired(forceApiLoad : Boolean = false){
         scope.launch {
-            val data = async(context = Dispatchers.IO){networkInteractor.getWeather(sharedPreferences,forceApiLoad)}
+            val data = async(context = Dispatchers.IO){networkInteractor.getWeather(forceApiLoad)}
             withContext(Dispatchers.Main) {onWeatherReceived(data.await())}
         }
     }
@@ -33,7 +33,6 @@ class WeatherPresenter @Inject constructor(var networkInteractor : NetworkIntera
             viewState.showWeather(weather)
             dbInteractor.addTown(TownClass(weather.getTownName()))
             networkInteractor.changeTown(TownClass(weather.getTownName()))
-            viewState.saveWeather(weather)
         }
     }
 

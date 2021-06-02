@@ -15,7 +15,7 @@ class TownsPresenter @Inject constructor(private val networkInteractor: NetworkI
 
     fun onAddButtonClick(town:TownClass){
         dbInteractor.addTown(town)
-        viewState.updateList(dbInteractor.getAllTowns())
+        viewState.addItem(town)
     }
 
     fun onTownsRequired(){

@@ -12,11 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.weatherproj.Urls.Companion.BOTTOM_NAV_WEATHER_PAGE_ID
-import com.example.weatherproj.Urls.Companion.FRAGMENT_CHANGE
+import com.example.weatherproj.utils.Constants.Companion.BOTTOM_NAV_WEATHER_PAGE_ID
+import com.example.weatherproj.utils.Constants.Companion.FRAGMENT_CHANGE
 import com.example.weatherproj.fragments.InfoFragment
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
+import com.example.weatherproj.utils.Constants
+import com.example.weatherproj.utils.MainApp
 import com.google.android.gms.location.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import moxy.MvpAppCompatActivity
@@ -52,31 +54,15 @@ class MainActivity : MvpAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
-        
-
         fragManager = supportFragmentManager
         fragTrans = fragManager.beginTransaction()
         bottomNavigationView = findViewById(com.example.weatherproj.R.id.bottomNav)
-
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-
         getLastLocation()
-
-
         registerReceiver()
-
-
-
-
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-
             changeFrag(item.itemId)
             true
-
         }
     }
 
@@ -99,7 +85,7 @@ class MainActivity : MvpAppCompatActivity() {
                 var location : Location? = task.result
                 if(location != null){
                     Log.d("coords", String.format("Longitude: %s, Latitude: %s", location.longitude, location.latitude))
-                    setCurLoc(location.latitude.toString(),location.longitude.toString())
+                    setCurrentLocation(location.latitude.toString(),location.longitude.toString())
                     changeFrag(BOTTOM_NAV_WEATHER_PAGE_ID)
                 }else{
                     getNewLocation()
@@ -135,16 +121,16 @@ class MainActivity : MvpAppCompatActivity() {
         override fun onLocationResult(p0: LocationResult?) {
             var lastLocation : Location = p0!!.lastLocation
             Log.d("coords", String.format("Longitude: %s, Latitude: %s", lastLocation.longitude, lastLocation.latitude))
-            setCurLoc(lastLocation.latitude.toString(),lastLocation.longitude.toString())
+            setCurrentLocation(lastLocation.latitude.toString(),lastLocation.longitude.toString())
             changeFrag(BOTTOM_NAV_WEATHER_PAGE_ID)
         }
     }
 
-    private fun setCurLoc(lat:String,lon:String){
-        val myAppShared = MainApp.instance!!.getSharedPreferences(Urls.MY_PREFS,Context.MODE_PRIVATE)
+    private fun setCurrentLocation(lat:String, lon:String){
+        val myAppShared = MainApp.instance!!.getSharedPreferences(Constants.MY_PREFS,Context.MODE_PRIVATE)
         val editor = myAppShared.edit()
-        editor.putString(Urls.LATITUDE,lat)
-        editor.putString(Urls.LONGITUDE,lon)
+        editor.putString(Constants.LATITUDE,lat)
+        editor.putString(Constants.LONGITUDE,lon)
         editor.apply()
     }
 
@@ -169,18 +155,18 @@ class MainActivity : MvpAppCompatActivity() {
 
     fun changeFrag(id : Int){
         var myFrag : Fragment? = null
-        when(id){
+        myFrag = when(id){
             R.id.weatherPage -> {
-                myFrag = WeatherFragment.newInstance()
+                WeatherFragment.newInstance()
             }
             R.id.townsPage -> {
-                myFrag = TownsFragment.newInstance()
+                TownsFragment.newInstance()
             }
             R.id.infoPage -> {
-                myFrag = InfoFragment.newInstance()
+                InfoFragment.newInstance()
             }
             else -> {
-                myFrag = WeatherFragment.newInstance()
+                WeatherFragment.newInstance()
             }
 
         }
@@ -189,6 +175,4 @@ class MainActivity : MvpAppCompatActivity() {
         fragTrans.commit()
         setBottomNavigationItem(id)
     }
-
-
 }
