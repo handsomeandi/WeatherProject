@@ -12,9 +12,9 @@ import javax.inject.Inject
 
 class WeatherRepository @Inject constructor(
     var serverApi : ServerApi,
-    var dbDao: TownDao
+    var dbDao: TownDao,
+    var gson:Gson
 ){
-    private val gson = Gson()
     private val appSharedPreferences = MainApp.instance!!.getSharedPreferences(Constants.MY_PREFS, Context.MODE_PRIVATE)
     private val editor = appSharedPreferences.edit()
 
@@ -92,7 +92,7 @@ class WeatherRepository @Inject constructor(
         return appSharedPreferences.getString(Constants.LATITUDE,"")
     }
 
-    fun saveWeather(weather: Weather?) {
+    private fun saveWeather(weather: Weather?) {
         editor.remove(Constants.MY_WEATHER)
         editor.putString(Constants.MY_WEATHER, gson.toJson(weather))
         editor.apply()

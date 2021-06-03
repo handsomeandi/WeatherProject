@@ -12,7 +12,6 @@ import com.example.weatherproj.presenters.WeatherPresenter
 import com.example.weatherproj.utils.MainApp
 import com.example.weatherproj.views.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
-import com.google.gson.Gson
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -24,14 +23,12 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
     WeatherView {
     private lateinit var sunset : TextView
     private lateinit var wetness : TextView
-    private lateinit var wind_speed : TextView
-    private lateinit var weather_cond : TextView
+    private lateinit var windSpeed : TextView
+    private lateinit var weatherCond : TextView
     private lateinit var sunrise : TextView
     private lateinit var townName : TextView
-    private lateinit var current_temp : TextView
+    private lateinit var currentTemp : TextView
     private lateinit var swipeWeather : SwipeRefreshLayout
-
-    var gson : Gson = Gson()
 
 
     @InjectPresenter
@@ -53,10 +50,10 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
 
         sunset = view.findViewById(R.id.sunsetTv)
         sunrise = view.findViewById(R.id.sunriseTv)
-        wind_speed = view.findViewById(R.id.githubLabel)
-        weather_cond = view.findViewById(R.id.phoneNumLabel)
+        windSpeed = view.findViewById(R.id.githubLabel)
+        weatherCond = view.findViewById(R.id.phoneNumLabel)
         wetness = view.findViewById(R.id.librariesLabel)
-        current_temp = view.findViewById(R.id.currentTempTv)
+        currentTemp = view.findViewById(R.id.currentTempTv)
         swipeWeather = view.findViewById(R.id.swipeWeather)
         townName = view.findViewById(R.id.townName)
 
@@ -85,12 +82,12 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
                 getString(R.string.wetness_string),
                 weather.getHumidity()
             )
-            wind_speed.text = java.lang.String.format(
+            windSpeed.text = java.lang.String.format(
                 "%s%s",
                 getString(R.string.wind_speed_string),
                 weather.getWindSpeed()
             )
-            weather_cond.text = java.lang.String.format(
+            weatherCond.text = java.lang.String.format(
                 "%s%s",
                 getString(R.string.weather_cond_string),
                 weather.getWeatherConditions()
@@ -100,12 +97,12 @@ class WeatherFragment : MvpAppCompatFragment(R.layout.fragment_weather),
                 getString(R.string.sunrise_string),
                 weather.getSunrise()
             )
-            current_temp.text = java.lang.String.format(
+            currentTemp.text = java.lang.String.format(
                 "%s%s C",
                 getString(R.string.current_temp_string),
                 weather.getTemp()
             )
-            townName.text = java.lang.String.format("%s%s",getString(R.string.town_string), weather.getTownName())
+            townName.text = java.lang.String.format("%s%s",getString(R.string.town_string), weather.townName)
         }
     }
 

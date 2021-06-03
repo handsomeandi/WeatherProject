@@ -5,6 +5,7 @@ import com.example.weatherproj.DaggerMainComponent
 import com.example.weatherproj.MainComponent
 import com.example.weatherproj.modules.ContextModule
 import com.example.weatherproj.modules.DBModule
+import com.example.weatherproj.modules.DataModule
 import com.example.weatherproj.modules.NetworkModule
 
 
@@ -20,7 +21,7 @@ class MainApp() : Application() {
         instance = this
         component = DaggerMainComponent.builder().contextModule(ContextModule(this)).dBModule(
             DBModule()
-        ).networkModule(NetworkModule()).build()
+        ).networkModule(NetworkModule()).dataModule(DataModule()).build()
     }
 
 }

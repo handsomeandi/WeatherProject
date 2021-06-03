@@ -2,19 +2,11 @@ package com.example.weatherproj.weatherobjects
 
 import com.google.gson.annotations.SerializedName
 
-class SunObject{
+data class SunObject(
+
     @SerializedName("sunrise")
-    private var sunrise: Long = 0
+    var sunrise: Long = 0,
 
     @SerializedName("sunset")
-    private var sunset: Long = 0
-
-    fun getSunset(): Long {
-        return sunset
-    }
-
-    fun getSunrise(): Long {
-        return sunrise
-    }
-
-}
+    var sunset: Long = 0
+)

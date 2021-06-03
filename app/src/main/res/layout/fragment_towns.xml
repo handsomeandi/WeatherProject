@@ -10,10 +10,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/townsListView"
         android:layout_width="wrap_content"
-        android:layout_height="500dp"
+        android:layout_height="300dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/townEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,11 +21,11 @@
         android:id="@+id/townEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/addTownBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/townsListView" />
@@ -35,11 +34,11 @@
         android:id="@+id/addTownBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/addLabel_string"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/addLabel_string"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/townEditText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

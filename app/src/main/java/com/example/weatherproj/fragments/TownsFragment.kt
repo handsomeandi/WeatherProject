@@ -30,7 +30,6 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
 
     private lateinit var townsListView : RecyclerView
     private lateinit var adapter : TownsRecyclerViewAdapter
-    var townNames:ArrayList<String> = ArrayList()
 
     @InjectPresenter
     lateinit var townsPresenter: TownsPresenter
@@ -56,13 +55,11 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
         townsListView.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         townsListView.adapter = adapter
         changeCityBtn.setOnClickListener(this)
-        townsPresenter.onTownsRequired()
-
 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        MainApp.instance!!.component!!.inject(this)
+        MainApp.instance?.component?.inject(this)
         super.onCreate(savedInstanceState)
     }
 
@@ -96,9 +93,9 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
     }
 
     override fun switchToWeatherFrag() {
-        if(activity != null){
-            LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent("change fragment").putExtra(
-            Constants.FRAGMENT_CHANGE, Constants.BOTTOM_NAV_WEATHER_PAGE_ID))
+        activity?.let {
+            LocalBroadcastManager.getInstance(it).sendBroadcast(Intent("change fragment").putExtra(
+                Constants.FRAGMENT_CHANGE, Constants.BOTTOM_NAV_WEATHER_PAGE_ID))
         }
     }
 }

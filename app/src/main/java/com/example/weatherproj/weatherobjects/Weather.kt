@@ -8,58 +8,56 @@ import java.util.List;
 
 
 
-class Weather {
+data class Weather(
+
     @SerializedName("main")
-    private val main: MainObject? = null
+    private val main: MainObject? = null,
 
     @SerializedName("weather")
-    private val weather: List<WeatherObject>? = null
+    private val weather: List<WeatherObject>? = null,
 
     @SerializedName("wind")
-    private val wind: WindObject? = null
+    private val wind: WindObject? = null,
 
     @SerializedName("sys")
-    private lateinit var sys: SunObject
+    private  var sys: SunObject,
 
     @SerializedName("name")
-    private var name : String? = null
+    var townName : String? = null
+) {
 
     fun getTemp(): String? {
-        return main!!.getTemp()
+        return main!!.temp
     }
 
     fun getWeatherConditions(): String? {
-        return weather!![0].getDescription()
+        return weather!![0].description
     }
 
     fun getWindSpeed(): String? {
-        return wind!!.getSpeed()
+        return wind!!.speed
     }
 
 
     fun getHumidity(): String? {
-        return main!!.getHumidity()
+        return main!!.humidity
     }
 
 
     fun getSunrise(): String? {
-        return getDate(sys.getSunrise(), "HH:mm:ss")
+        return getDate(sys.sunrise, "HH:mm:ss")
     }
 
 
     fun getSunset(): String? {
-        return getDate(sys.getSunset(), "HH:mm:ss")
+        return getDate(sys.sunset, "HH:mm:ss")
     }
 
     fun getDate(seconds: Long, dateFormat: String?): String? {
         val formatter = SimpleDateFormat(dateFormat)
         val calendar: Calendar = Calendar.getInstance()
-        calendar.setTimeInMillis(seconds * 1000)
-        return formatter.format(calendar.getTime())
-    }
-
-    fun getTownName() : String?{
-        return name
+        calendar.timeInMillis = seconds * 1000
+        return formatter.format(calendar.time)
     }
 
 

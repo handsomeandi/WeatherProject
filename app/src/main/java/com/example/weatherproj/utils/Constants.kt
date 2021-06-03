@@ -4,7 +4,7 @@ import com.example.weatherproj.R
 
 class Constants {
     companion object {
-        var BASE_URL: String = "https://api.openweathermap.org/data/2.5/"
+        const val BASE_URL: String = "https://api.openweathermap.org/data/2.5/"
         const val URL_WEATHER : String = "weather?appid=53c6e39cf3ee11a1d7549ffea83d6bd8&units=metric&lang=ru"
         const val MY_PREFS = "myprefs"
         const val MY_WEATHER = "myweather"

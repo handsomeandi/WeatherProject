@@ -12,13 +12,17 @@ import javax.inject.Inject
 class TownsPresenter @Inject constructor(private val networkInteractor: NetworkInteractor, private val dbInteractor : DBInteractor) : MvpPresenter<TownsView>()  {
 
 
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        onTownsRequired()
+    }
 
     fun onAddButtonClick(town:TownClass){
         dbInteractor.addTown(town)
         viewState.addItem(town)
     }
 
-    fun onTownsRequired(){
+    private fun onTownsRequired(){
         var towns: List<TownClass> = dbInteractor.getAllTowns()
         onTownsReceived(towns)
     }

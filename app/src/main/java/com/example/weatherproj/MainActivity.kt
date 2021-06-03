@@ -34,7 +34,7 @@ class MainActivity : MvpAppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest : LocationRequest
 
-    private var PERMISSION_ID = 1000
+    private var permissionId = 1000
 
 
 
@@ -47,7 +47,7 @@ class MainActivity : MvpAppCompatActivity() {
     }
 
     private fun accessPermissions(){
-        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), PERMISSION_ID)
+        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), permissionId)
     }
 
 
@@ -139,7 +139,7 @@ class MainActivity : MvpAppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if(requestCode == PERMISSION_ID){
+        if(requestCode == permissionId){
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Log.d("check", "You have a permission")
                 getLastLocation()
@@ -149,7 +149,7 @@ class MainActivity : MvpAppCompatActivity() {
 
 
     private fun setBottomNavigationItem(id: Int){
-        bottomNavigationView.getMenu().findItem(id).setChecked(true);
+        bottomNavigationView.menu.findItem(id).isChecked = true;
     }
 
 

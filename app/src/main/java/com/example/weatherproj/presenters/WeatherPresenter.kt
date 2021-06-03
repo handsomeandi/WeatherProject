@@ -1,22 +1,18 @@
 package com.example.weatherproj.presenters
 
-import android.content.SharedPreferences
-import com.google.gson.Gson
-import moxy.InjectViewState
-import moxy.MvpPresenter
 import com.example.weatherproj.databaseobjects.TownClass
 import com.example.weatherproj.interactors.DBInteractor
 import com.example.weatherproj.interactors.NetworkInteractor
 import com.example.weatherproj.views.WeatherView
 import com.example.weatherproj.weatherobjects.Weather
 import kotlinx.coroutines.*
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import javax.inject.Inject
 
 
 @InjectViewState
 class WeatherPresenter @Inject constructor(var networkInteractor : NetworkInteractor, var dbInteractor: DBInteractor) : MvpPresenter<WeatherView>() {
-
-    var gson: Gson = Gson()
 
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
@@ -31,8 +27,8 @@ class WeatherPresenter @Inject constructor(var networkInteractor : NetworkIntera
     private fun onWeatherReceived(weather: Weather?){
         if(weather!=null){
             viewState.showWeather(weather)
-            dbInteractor.addTown(TownClass(weather.getTownName()))
-            networkInteractor.changeTown(TownClass(weather.getTownName()))
+            dbInteractor.addTown(TownClass(weather.townName))
+            networkInteractor.changeTown(TownClass(weather.townName))
         }
     }
 
