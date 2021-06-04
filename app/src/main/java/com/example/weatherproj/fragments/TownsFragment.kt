@@ -94,7 +94,7 @@ class TownsFragment : MvpAppCompatFragment(), TownsView, View.OnClickListener {
 
     override fun switchToWeatherFrag() {
         activity?.let {
-            LocalBroadcastManager.getInstance(it).sendBroadcast(Intent("change fragment").putExtra(
+            LocalBroadcastManager.getInstance(it).sendBroadcast(Intent(Constants.INTENT_CHANGE_TO_WEATHER_FRAG).putExtra(
                 Constants.FRAGMENT_CHANGE, Constants.BOTTOM_NAV_WEATHER_PAGE_ID))
         }
     }

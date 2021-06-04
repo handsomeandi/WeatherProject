@@ -17,24 +17,53 @@ import com.example.weatherproj.utils.Constants.Companion.FRAGMENT_CHANGE
 import com.example.weatherproj.fragments.InfoFragment
 import com.example.weatherproj.fragments.TownsFragment
 import com.example.weatherproj.fragments.WeatherFragment
+import com.example.weatherproj.presenters.MainPresenter
+import com.example.weatherproj.presenters.WeatherPresenter
 import com.example.weatherproj.utils.Constants
 import com.example.weatherproj.utils.MainApp
+import com.example.weatherproj.views.MainView
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.gms.location.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import moxy.MvpAppCompatActivity
+import moxy.ktx.moxyPresenter
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
+
+import javax.inject.Inject
+import javax.inject.Provider
 
 
-class MainActivity : MvpAppCompatActivity() {
+class MainActivity : MvpAppCompatActivity(), MainView {
 
     private lateinit var bottomNavigationView : BottomNavigationView
-    private lateinit var fragTrans: FragmentTransaction
 
-    private lateinit var fragManager: FragmentManager
+    private lateinit var navigator:Navigator
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest : LocationRequest
 
     private var permissionId = 1000
+
+    @Inject
+    lateinit var navigationHolder: NavigatorHolder
+
+
+    @InjectPresenter
+    lateinit var mainPresenter: MainPresenter
+
+
+    @Inject
+    lateinit var presenterProvider : Provider<MainPresenter>
+
+
+    @ProvidePresenter
+    fun provideMainPresenter() : MainPresenter {
+        return presenterProvider.get()
+    }
 
 
 
@@ -52,30 +81,34 @@ class MainActivity : MvpAppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        MainApp.instance?.component?.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        fragManager = supportFragmentManager
-        fragTrans = fragManager.beginTransaction()
-        bottomNavigationView = findViewById(com.example.weatherproj.R.id.bottomNav)
+        navigator = AppNavigator(this,R.id.frameLay,supportFragmentManager)
+        navigationHolder.setNavigator(navigator)
+        bottomNavigationView = findViewById(R.id.bottomNav)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         getLastLocation()
         registerReceiver()
+    }
+
+    override fun onResume() {
+        super.onResume()
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            changeFrag(item.itemId)
+            mainPresenter.changeFrag(item.itemId)
             true
         }
     }
 
 
-
     private fun registerReceiver(){
         var act2InitReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                changeFrag(intent.getIntExtra(FRAGMENT_CHANGE,-10))
+                mainPresenter.changeFrag(intent.getIntExtra(FRAGMENT_CHANGE,-10))
             }
         }
         LocalBroadcastManager.getInstance(this)
-            .registerReceiver(act2InitReceiver, IntentFilter("change fragment"))
+            .registerReceiver(act2InitReceiver, IntentFilter(Constants.INTENT_CHANGE_TO_WEATHER_FRAG))
     }
 
     @SuppressLint("MissingPermission")
@@ -84,9 +117,8 @@ class MainActivity : MvpAppCompatActivity() {
             fusedLocationClient.lastLocation.addOnCompleteListener{task ->
                 var location : Location? = task.result
                 if(location != null){
-                    Log.d("coords", String.format("Longitude: %s, Latitude: %s", location.longitude, location.latitude))
                     setCurrentLocation(location.latitude.toString(),location.longitude.toString())
-                    changeFrag(BOTTOM_NAV_WEATHER_PAGE_ID)
+                    mainPresenter.changeFrag(BOTTOM_NAV_WEATHER_PAGE_ID)
                 }else{
                     getNewLocation()
                 }
@@ -113,25 +145,24 @@ class MainActivity : MvpAppCompatActivity() {
             return
         }
         fusedLocationClient.requestLocationUpdates(locationRequest,
-            locationCallback,Looper.myLooper()
+            locationCallback,Looper.myLooper()!!
         )
     }
 
     private val locationCallback = object : LocationCallback(){
         override fun onLocationResult(p0: LocationResult?) {
             var lastLocation : Location = p0!!.lastLocation
-            Log.d("coords", String.format("Longitude: %s, Latitude: %s", lastLocation.longitude, lastLocation.latitude))
             setCurrentLocation(lastLocation.latitude.toString(),lastLocation.longitude.toString())
-            changeFrag(BOTTOM_NAV_WEATHER_PAGE_ID)
+            mainPresenter.changeFrag(BOTTOM_NAV_WEATHER_PAGE_ID)
         }
     }
 
     private fun setCurrentLocation(lat:String, lon:String){
-        val myAppShared = MainApp.instance!!.getSharedPreferences(Constants.MY_PREFS,Context.MODE_PRIVATE)
-        val editor = myAppShared.edit()
-        editor.putString(Constants.LATITUDE,lat)
-        editor.putString(Constants.LONGITUDE,lon)
-        editor.apply()
+        val myAppShared = MainApp.instance?.getSharedPreferences(Constants.MY_PREFS,Context.MODE_PRIVATE)
+        val editor = myAppShared?.edit()
+        editor?.putString(Constants.LATITUDE,lat)
+        editor?.putString(Constants.LONGITUDE,lon)
+        editor?.apply()
     }
 
     override fun onRequestPermissionsResult(
@@ -141,38 +172,16 @@ class MainActivity : MvpAppCompatActivity() {
     ) {
         if(requestCode == permissionId){
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Log.d("check", "You have a permission")
                 getLastLocation()
             }
         }
     }
 
 
-    private fun setBottomNavigationItem(id: Int){
-        bottomNavigationView.menu.findItem(id).isChecked = true;
-    }
-
-
-    fun changeFrag(id : Int){
-        var myFrag : Fragment? = null
-        myFrag = when(id){
-            R.id.weatherPage -> {
-                WeatherFragment.newInstance()
-            }
-            R.id.townsPage -> {
-                TownsFragment.newInstance()
-            }
-            R.id.infoPage -> {
-                InfoFragment.newInstance()
-            }
-            else -> {
-                WeatherFragment.newInstance()
-            }
-
+    override fun setBottomNavigationItem(id: Int?){
+        if(id!=null){
+            bottomNavigationView.menu.findItem(id).isChecked = true;
         }
-        fragTrans = fragManager.beginTransaction()
-        fragTrans.replace(R.id.frameLay, myFrag)
-        fragTrans.commit()
-        setBottomNavigationItem(id)
     }
+
 }

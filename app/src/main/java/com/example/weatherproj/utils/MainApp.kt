@@ -3,10 +3,7 @@ package com.example.weatherproj.utils
 import android.app.Application
 import com.example.weatherproj.DaggerMainComponent
 import com.example.weatherproj.MainComponent
-import com.example.weatherproj.modules.ContextModule
-import com.example.weatherproj.modules.DBModule
-import com.example.weatherproj.modules.DataModule
-import com.example.weatherproj.modules.NetworkModule
+import com.example.weatherproj.modules.*
 
 
 class MainApp() : Application() {
@@ -21,7 +18,7 @@ class MainApp() : Application() {
         instance = this
         component = DaggerMainComponent.builder().contextModule(ContextModule(this)).dBModule(
             DBModule()
-        ).networkModule(NetworkModule()).dataModule(DataModule()).build()
+        ).networkModule(NetworkModule()).dataModule(DataModule()).navModule(NavModule()).build()
     }
 
 }

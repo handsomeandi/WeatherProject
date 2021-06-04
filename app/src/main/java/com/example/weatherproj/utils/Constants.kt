@@ -19,6 +19,7 @@ class Constants {
         const val TOWN_TABLE = "town"
 
         const val BOTTOM_NAV_WEATHER_PAGE_ID = R.id.weatherPage
+        const val INTENT_CHANGE_TO_WEATHER_FRAG = "change to weather"
 
 
     }
