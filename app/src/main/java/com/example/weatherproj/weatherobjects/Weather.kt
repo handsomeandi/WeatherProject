@@ -27,20 +27,20 @@ data class Weather(
 ) {
 
     fun getTemp(): String? {
-        return main!!.temp
+        return main?.temp
     }
 
     fun getWeatherConditions(): String? {
-        return weather!![0].description
+        return weather?.get(0)?.description
     }
 
     fun getWindSpeed(): String? {
-        return wind!!.speed
+        return wind?.speed
     }
 
 
     fun getHumidity(): String? {
-        return main!!.humidity
+        return main?.humidity
     }
 
 

@@ -1,7 +1,10 @@
 package com.example.weatherproj.modules
 
+import com.example.weatherproj.BuildConfig
 import com.example.weatherproj.utils.Constants
 import com.example.weatherproj.networkobjects.ServerApi
+import com.example.weatherproj.utils.NetworkHandler
+import com.example.weatherproj.utils.RetrofitNetworkHandler
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -17,10 +20,12 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideRetrofit(client: OkHttpClient.Builder): Retrofit {
-        client.connectTimeout(30, TimeUnit.SECONDS)
-        client.writeTimeout(60, TimeUnit.SECONDS)
-        client.readTimeout(60, TimeUnit.SECONDS)
-        return Retrofit.Builder().baseUrl(Constants.BASE_URL).client(client.build())
+        client.let {
+            it.connectTimeout(30,TimeUnit.SECONDS)
+            it.writeTimeout(60, TimeUnit.SECONDS)
+            it.readTimeout(60, TimeUnit.SECONDS)
+        }
+        return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(client.build())
             .addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(
                 CoroutineCallAdapterFactory()
             ).build()
@@ -29,7 +34,7 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideClient(interceptor: HttpLoggingInterceptor): OkHttpClient.Builder {
-        interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
 
         return OkHttpClient.Builder().addInterceptor(interceptor)
     }
@@ -45,6 +50,10 @@ class NetworkModule {
     fun provideServerApi(retrofit: Retrofit): ServerApi {
         return retrofit.create(ServerApi::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideNetworkHandler(serverApi: ServerApi) : NetworkHandler = RetrofitNetworkHandler(serverApi)
 
 
 

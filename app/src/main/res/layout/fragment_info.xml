@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/currentTempTv" />
 
     <TextView
-        android:id="@+id/githubLabel"
+        android:id="@+id/windSpeedLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -44,7 +44,7 @@
         app:layout_constraintTop_toBottomOf="@+id/phoneNumLabel" />
 
     <TextView
-        android:id="@+id/librariesLabel"
+        android:id="@+id/humidityLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -53,7 +53,7 @@
         android:textSize="15dp"
         android:layout_marginLeft="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/githubLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/windSpeedLabel" />
 
     <TextView
         android:id="@+id/fio"
@@ -100,7 +100,7 @@
         android:textSize="15dp"
         android:layout_marginLeft="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/librariesLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/humidityLabel" />
 
 
 

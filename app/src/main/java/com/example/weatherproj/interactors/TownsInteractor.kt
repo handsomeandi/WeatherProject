@@ -4,14 +4,18 @@ import com.example.weatherproj.databaseobjects.TownClass
 import com.example.weatherproj.weatherobjects.WeatherRepository
 import javax.inject.Inject
 
-class DBInteractor @Inject constructor(
-    var mWeatherRepository: WeatherRepository
+class TownsInteractor @Inject constructor(
+    var weatherRepository: WeatherRepository
 ) {
     fun addTown(town : TownClass){
-        mWeatherRepository.addTown(town)
+        weatherRepository.addTown(town)
     }
 
     fun getAllTowns() : List<TownClass>{
-        return mWeatherRepository.getAllTowns()
+        return weatherRepository.getAllTowns()
+    }
+
+    fun changeTown(town: TownClass) {
+        weatherRepository.changeTown(town.name.toString())
     }
 }

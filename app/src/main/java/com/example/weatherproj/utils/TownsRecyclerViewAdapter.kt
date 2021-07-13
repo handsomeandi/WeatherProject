@@ -21,13 +21,13 @@ class TownsRecyclerViewAdapter : RecyclerView.Adapter<TownsRecyclerViewAdapter.I
         init {
             townTV.setOnClickListener {
                 town?.let {
-                    onClick?.invoke(TownClass(it.name.toString()))
+                    onClick(TownClass(it.name.toString()))
                 }
             }
         }
     }
 
-    var onClick: ( (TownClass) -> Unit)? = null
+    lateinit var onClick: ( (TownClass) -> Unit)
 
     private var containerList: ArrayList<TownClass>? = null
 

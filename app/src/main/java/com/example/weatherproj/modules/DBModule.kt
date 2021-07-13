@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.example.weatherproj.databaseobjects.MyDB
 import com.example.weatherproj.databaseobjects.TownDao
 import com.example.weatherproj.utils.Constants.Companion.DB_NAME
+import com.example.weatherproj.utils.DBHandler
+import com.example.weatherproj.utils.RoomDbHandler
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -25,6 +27,10 @@ class DBModule {
     fun provideDao(db: MyDB): TownDao {
         return db.townDao()
     }
+
+    @Singleton
+    @Provides
+    fun provideDbHandler(dao: TownDao) : DBHandler = RoomDbHandler(dao)
 
 
 }

@@ -19,18 +19,15 @@ class MainPresenter @Inject constructor (var router: Router) : MvpPresenter<Main
     }
 
     fun changeFrag(id:Int){
-        var bottomNavId : Int
-        var myScreen: Screen = when(id){
+        var bottomNavId : Int = id
+        val myScreen: Screen = when(id){
             R.id.weatherPage -> {
-                bottomNavId = id
                 Screens.weatherScreen()
             }
             R.id.townsPage -> {
-                bottomNavId = id
                 Screens.townsScreen()
             }
             R.id.infoPage -> {
-                bottomNavId = id
                 Screens.infoScreen()
             }
             else -> {
@@ -41,6 +38,10 @@ class MainPresenter @Inject constructor (var router: Router) : MvpPresenter<Main
         }
         router.navigateTo(myScreen)
         viewState.setBottomNavigationItem(bottomNavId)
+    }
+
+    fun onBack(){
+        router.finishChain()
     }
 
 }

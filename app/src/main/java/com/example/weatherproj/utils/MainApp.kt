@@ -6,11 +6,11 @@ import com.example.weatherproj.MainComponent
 import com.example.weatherproj.modules.*
 
 
-class MainApp() : Application() {
+class MainApp : Application() {
     var component: MainComponent? = null
 
     companion object {
-        var instance: MainApp? = null
+        lateinit var instance: MainApp
     }
 
     override fun onCreate() {
